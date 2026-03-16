@@ -1,0 +1,29 @@
+{% extends "manager/base_manager.html" %}
+{% load crispy_forms_tags %}
+
+{% block header %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <h5 class="fw-bold mb-4">
+                <i class="fas {% if 'Edit' in title %}fa-user-edit{% else %}fa-user-plus{% endif %} me-2 text-teal"></i>
+                {{ title }}
+            </h5>
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-teal btn-lg rounded-pill">
+                        {% if 'Edit' in title %}Update Profile{% else %}Create Staff Account{% endif %}
+                    </button>
+                    <a href="{% url 'manager:staff_list' %}" class="btn btn-light rounded-pill border">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

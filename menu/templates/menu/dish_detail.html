@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ item.name }} - HotelFood{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-5 animate-fade-in">
+    <ol class="breadcrumb glass-panel px-4 py-3 mb-0 shadow-sm">
+        <li class="breadcrumb-item"><a href="{% url 'menu:menu_list' %}" class="text-decoration-none">Explore Menu</a></li>
+        <li class="breadcrumb-item active fw-bold text-dark">{{ item.name }}</li>
+    </ol>
+</nav>
+
+<div class="row g-5">
+    <!-- Food Image -->
+    <div class="col-md-6 animate-fade-in" style="--delay: 100ms;">
+        <div class="card card-premium overflow-hidden border-0 h-100">
+            <img src="{{ item.image.url }}" class="img-fluid h-100 w-100" alt="{{ item.name }}" style="object-fit: cover; min-height: 450px;">
+        </div>
+    </div>
+ 
+    <!-- Dish Details -->
+    <div class="col-md-6 animate-fade-in" style="--delay: 200ms;">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <span class="badge bg-primary bg-opacity-10 text-primary border-primary rounded-pill px-3 mb-3">{{ item.category.name }}</span>
+                <h1 class="fw-bold display-5 mb-0 text-dark">{{ item.name }}</h1>
+            </div>
+            <div class="text-end">
+                <h2 class="text-primary fw-bold mb-0">₹{{ item.price }}</h2>
+                <span class="text-muted small"><i class="far fa-clock me-1"></i>{{ item.preparation_time }}m wait</span>
+            </div>
+        </div>
+ 
+        <p class="lead text-muted mb-5">{{ item.description }}</p>
+ 
+        <div class="glass-panel p-4 mb-5 border-0 shadow-sm">
+            <h5 class="fw-bold mb-3 d-flex align-items-center">
+                <i class="fas fa-leaf me-2 text-success"></i> Ingredients
+            </h5>
+            <p class="text-muted mb-0">{{ item.ingredients }}</p>
+            
+            {% if item.allergens %}
+            <div class="mt-4 p-3 bg-danger bg-opacity-10 rounded-4 border-0">
+                <small class="text-danger fw-bold d-block mb-1 text-uppercase letter-spacing-1">Allergen Warning</small>
+                <div class="text-dark small">{{ item.allergens }}</div>
+            </div>
+            {% endif %}
+        </div>
+ 
+        <!-- Add to Cart Form -->
+        <div class="card card-premium p-4 border-0">
+            <form action="{% url 'orders:cart_add' item.id %}" method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-dark">Quantity</label>
+                        <div class="input-group input-group-lg bg-light rounded-pill p-1">
+                            <button class="btn btn-link text-primary border-0 shadow-none px-3" type="button" onclick="changeQty(-1)"><i class="fas fa-minus"></i></button>
+                            <input type="number" name="quantity" id="quantity" class="form-control border-0 bg-transparent text-center fw-bold" value="1" min="1" readonly>
+                            <button class="btn btn-link text-primary border-0 shadow-none px-3" type="button" onclick="changeQty(1)"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold small text-dark">Kitchen Note</label>
+                        <textarea name="instructions" class="form-control border-light bg-light rounded-4" rows="2" placeholder="e.g. No onions, extra spicy..."></textarea>
+                    </div>
+                </div>
+                <div class="d-grid mt-4">
+                    {% if item.is_available %}
+                    <button type="submit" class="btn btn-premium py-3 shadow-lg">
+                        <i class="fas fa-cart-plus me-2"></i> Add to Order
+                    </button>
+                    {% else %}
+                    <button type="button" class="btn btn-secondary py-3 rounded-pill cursor-not-allowed" disabled>
+                        Currently Unavailable
+                    </button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function changeQty(delta) {
+    const input = document.getElementById('quantity');
+    let val = parseInt(input.value) + delta;
+    if (val < 1) val = 1;
+    input.value = val;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "manager/base_manager.html" %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+<div class="row animate-fade-in">
+    <div class="col-12">
+        <div class="card card-premium overflow-hidden border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-4 border-0">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                    <div>
+                        <h4 class="fw-bold mb-1">Monthly Income Report</h4>
+                        <p class="text-muted small mb-0"><i class="far fa-calendar-alt me-1"></i> period: {{ current_month }}</p>
+                    </div>
+                    <button onclick="window.print()" class="btn btn-light rounded-pill px-4 border shadow-sm">
+                        <i class="fas fa-download me-2"></i> Download Page
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <div class="row align-items-center g-4">
+                    <div class="col-md-7">
+                        <div class="p-4 bg-primary bg-opacity-10 rounded-4 border-dashed border-primary border-opacity-25">
+                            <p class="text-muted small fw-bold text-uppercase mb-2">Total Monthly Revenue</p>
+                            <h1 class="display-3 fw-bold text-dark mb-0">₹{{ revenue_month }}</h1>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="row g-3">
+                            <div class="col-6 col-md-12">
+                                <div class="p-3 border rounded-4 bg-light">
+                                    <p class="text-muted extra-small fw-bold text-uppercase mb-1">Delivered Orders</p>
+                                    <h3 class="fw-bold text-primary mb-0">{{ total_orders_month }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-12">
+                                <div class="p-3 border rounded-4 bg-light">
+                                    <p class="text-muted extra-small fw-bold text-uppercase mb-1">Status</p>
+                                    <h5 class="fw-bold text-success mb-0"><i class="fas fa-check-circle me-1"></i> Verified</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

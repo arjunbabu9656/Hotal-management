@@ -1,0 +1,128 @@
+{% extends "manager/base_manager.html" %}
+
+{% block header %}Staff Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-0">Staff members</h5>
+        <p class="text-muted small mb-0">Manage kitchen and service staff accounts</p>
+    </div>
+    <a href="{% url 'manager:staff_add' %}" class="btn btn-teal rounded-pill px-4 shadow-sm">
+        <i class="fas fa-user-plus me-2"></i> Add Staff
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Name</th>
+                    <th>Role</th>
+                    <th>Phone</th>
+                    <th>Date Joined</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for staff in staff_users %}
+                <tr>
+                    <td class="ps-4">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">{{ staff.username }}</h6>
+                                <small class="text-muted">{{ staff.email }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge {% if staff.profile.role == 'manager' %}bg-primary{% else %}bg-info{% endif %} rounded-pill px-3">
+                            {{ staff.profile.get_role_display }}
+                        </span>
+                        {% if staff.profile.role == 'staff' and staff.profile.staff_role != 'none' %}
+                            <div class="mt-1 small text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">
+                                <i class="fas fa-id-badge me-1"></i> {{ staff.profile.get_staff_role_display }}
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td>{{ staff.profile.phone|default:"-" }}</td>
+                    <td class="text-muted">{{ staff.date_joined|date:"M d, Y" }}</td>
+                    <td>
+                        {% if staff.profile.is_online %}
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 border border-success border-opacity-25">
+                            <i class="fas fa-circle me-1 extra-small animate-pulse"></i> Online
+                        </span>
+                        {% else %}
+                        <span class="badge bg-light text-muted rounded-pill px-3 border">
+                            <i class="fas fa-circle me-1 extra-small"></i> Offline
+                        </span>
+                        {% endif %}
+                        
+                        <div class="mt-1">
+                            {% if staff.is_active %}
+                            <small class="text-success extra-small fw-bold text-uppercase">Account Active</small>
+                            {% else %}
+                            <small class="text-danger extra-small fw-bold text-uppercase">Disabled</small>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex align-items-center justify-content-end gap-2" id="staff-actions-{{ staff.pk }}">
+                            <a href="{% url 'manager:staff_edit' staff.pk %}" class="btn btn-sm btn-outline-primary border rounded-pill px-3">Edit</a>
+                            <button type="button" class="btn btn-sm btn-outline-danger border rounded-pill px-3 delete-trigger" data-staff-id="{{ staff.pk }}">Delete</button>
+                        </div>
+                        <div class="d-none align-items-center justify-content-end gap-2 staff-confirm-group" id="staff-confirm-{{ staff.pk }}" style="transform: scale(0.9); opacity: 0; transition: all 200ms cubic-bezier(0.22, 1, 0.36, 1);">
+                            <span class="text-danger small fw-bold">Confirm delete?</span>
+                            <form action="{% url 'manager:staff_delete' staff.pk %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm btn-premium-haptic">Yes</button>
+                            </form>
+                            <button type="button" class="btn btn-sm btn-light border rounded-pill px-3 cancel-delete" data-staff-id="{{ staff.pk }}">No</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-trigger')) {
+            const staffId = e.target.dataset.staffId;
+            const actions = document.getElementById(`staff-actions-${staffId}`);
+            const confirm = document.getElementById(`staff-confirm-${staffId}`);
+            
+            actions.classList.add('d-none');
+            confirm.classList.remove('d-none');
+            confirm.classList.add('d-flex');
+            requestAnimationFrame(() => {
+                confirm.style.transform = 'scale(1)';
+                confirm.style.opacity = '1';
+            });
+        }
+        
+        if (e.target.classList.contains('cancel-delete')) {
+            const staffId = e.target.dataset.staffId;
+            const actions = document.getElementById(`staff-actions-${staffId}`);
+            const confirm = document.getElementById(`staff-confirm-${staffId}`);
+            
+            confirm.style.transform = 'scale(0.9)';
+            confirm.style.opacity = '0';
+            setTimeout(() => {
+                confirm.classList.remove('d-flex');
+                confirm.classList.add('d-none');
+                actions.classList.remove('d-none');
+            }, 200);
+        }
+    });
+</script>
+{% endblock %}

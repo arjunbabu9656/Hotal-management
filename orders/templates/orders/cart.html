@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Your Cart - HotelFood{% endblock %}
+
+{% block content %}
+<div class="glass-panel p-3 p-md-4 mb-4 mb-md-5 animate-fade-in shadow-sm border-0 bg-primary bg-opacity-10 text-center text-md-start">
+    <h1 class="h4 fw-bold text-dark mb-0"><i class="fas fa-shopping-basket me-2 text-primary"></i>Your Cart</h1>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        {% if cart %}
+        <div class="card card-premium overflow-hidden border-0 mb-4 animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="table-responsive table-responsive-stack">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Item Details</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th class="text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart %}
+                        {% with food_item=item.food_item %}
+                        <tr>
+                            <td class="ps-4" data-label="Item">
+                                <div class="d-flex align-items-center py-2 justify-content-end justify-content-sm-start">
+                                    <img src="{{ food_item.image.url }}" class="rounded-3 me-3 d-none d-sm-block shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div class="text-end text-sm-start">
+                                        <h6 class="mb-0 fw-bold">{{ food_item.name }}</h6>
+                                        {% if item.instructions %}
+                                        <p class="text-primary extra-small mb-0">{{ item.instructions }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-label="Qty">
+                                <span class="badge bg-light text-dark border rounded-pill px-3 py-1 fw-medium">{{ item.quantity }}</span>
+                            </td>
+                            <td class="text-muted small" data-label="Price">₹{{ item.price }}</td>
+                            <td class="fw-bold text-primary" data-label="Total">₹{{ item.total_price }}</td>
+                            <td class="text-end pe-4" data-label="Action">
+                                <a href="{% url 'orders:cart_remove' food_item.id %}" class="btn btn-light btn-sm rounded-circle text-danger shadow-sm">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <a href="{% url 'menu:menu_list' %}" class="btn btn-light rounded-pill px-4 border shadow-sm">
+            <i class="fas fa-arrow-left me-2 text-primary"></i> Continue Selection
+        </a>
+        {% else %}
+        <div class="text-center py-5 glass-panel border-0 shadow-sm animate-fade-in">
+            <div class="bg-primary bg-opacity-10 d-inline-flex p-4 rounded-circle mb-4">
+                <i class="fas fa-shopping-basket fa-4x text-primary opacity-50"></i>
+            </div>
+            <h3 class="fw-bold text-dark">Your cart is empty</h3>
+            <p class="text-muted mb-4">Explore our signature menu and add some delicious items!</p>
+            <a href="{% url 'menu:menu_list' %}" class="btn btn-premium px-5">
+                <i class="fas fa-search me-2"></i> Browse Menu
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        {% if cart %}
+        <div class="card glass-panel sticky-top animate-fade-in" style="top: 100px; animation-delay: 0.2s;">
+            <div class="p-4">
+                <h4 class="fw-bold mb-4">Order Summary</h4>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Total Items</span>
+                    <span class="fw-bold">{{ cart|length }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-4 pt-3 border-top">
+                    <span class="h5 fw-bold">Total Amount</span>
+                    <span class="h4 fw-bold text-primary mb-0">₹{{ cart.get_total_price }}</span>
+                </div>
+                
+                <form action="{% url 'orders:checkout' %}" method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase tracking-wider">Order Type</label>
+                        <div class="d-flex gap-2">
+                            <input type="radio" class="btn-check" name="order_type" id="typeDelivery" value="delivery" checked onchange="toggleRoomField()">
+                            <label class="btn btn-outline-primary rounded-pill w-100 py-2" for="typeDelivery">
+                                <i class="fas fa-door-open me-1"></i> Delivery
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="order_type" id="typePickup" value="pickup" onchange="toggleRoomField()">
+                            <label class="btn btn-outline-primary rounded-pill w-100 py-2" for="typePickup">
+                                <i class="fas fa-utensils me-1"></i> Pickup
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase letter-spacing-1 mb-3">Payment Method</label>
+                        <div class="d-grid gap-3">
+                            <div class="payment-selector">
+                                <input type="radio" name="payment_method" id="payCash" value="cash" checked class="d-none">
+                                <label class="glass-panel w-100 p-3 d-flex align-items-center cursor-pointer border-light" for="payCash">
+                                    <div class="selector-dot me-3"></div>
+                                    <i class="fas fa-money-bill-wave text-success me-3 fs-5"></i>
+                                    <div>
+                                        <div class="fw-bold text-dark small">Cash on Delivery</div>
+                                        <div class="text-muted extra-small">Pay when you receive items</div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="payment-selector">
+                                <input type="radio" name="payment_method" id="payCard" value="card" class="d-none">
+                                <label class="glass-panel w-100 p-3 d-flex align-items-center cursor-pointer border-light" for="payCard">
+                                    <div class="selector-dot me-3"></div>
+                                    <i class="fas fa-credit-card text-primary me-3 fs-5"></i>
+                                    <div>
+                                        <div class="fw-bold text-dark small">Card Payment</div>
+                                        <div class="text-muted extra-small">Secure checkout with stripe</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 animate-fade-in" id="room-number-group">
+                        <label class="form-label fw-bold small text-uppercase tracking-wider">Room Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3"><i class="fas fa-door-closed text-muted"></i></span>
+                            <input type="text" name="room_number" id="id_room_number" class="form-control border-start-0 rounded-end-pill py-2" placeholder="Room #" value="{{ user.profile.room_number|default:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase tracking-wider">Special Requests</label>
+                        <textarea name="special_note" class="form-control rounded-4" rows="3" placeholder="Allergies, extra cutlery, etc."></textarea>
+                    </div>
+                    
+                    {% if user.is_authenticated %}
+                    <button type="submit" class="btn btn-premium btn-lg w-100 justify-content-center py-3 shadow-lg">
+                        Confirm & Order <i class="fas fa-chevron-right ms-2 small"></i>
+                    </button>
+                    {% else %}
+                    <div class="alert bg-primary bg-opacity-10 border-0 rounded-4 p-3 mb-0">
+                        <p class="small text-dark mb-2">Sign in to complete your order</p>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-sm rounded-pill px-4 w-100">Login Now</a>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function toggleRoomField() {
+    const isDelivery = document.getElementById('typeDelivery').checked;
+    const roomGroup = document.getElementById('room-number-group');
+    const roomInput = document.getElementById('id_room_number');
+    
+    if (isDelivery) {
+        roomGroup.style.display = 'block';
+        roomInput.required = true;
+    } else {
+        roomGroup.style.display = 'none';
+        roomInput.required = false;
+    }
+}
+// Initial run
+window.onload = toggleRoomField;
+</script>
+{% endblock %}

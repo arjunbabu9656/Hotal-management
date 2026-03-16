@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% load order_extras %}
+
+{% block title %}Order #{{ order.id }} - HotelFood{% endblock %}
+
+{% block extra_head %}
+<meta http-equiv="refresh" content="20">
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-5 animate-fade-in">
+    <ol class="breadcrumb glass-panel px-4 py-3 mb-0 shadow-sm">
+        <li class="breadcrumb-item"><a href="{% url 'orders:order_list' %}" class="text-decoration-none">My Orders</a></li>
+        <li class="breadcrumb-item active fw-bold text-dark">Order Tracking #{{ order.id }}</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <!-- Order Status Progress -->
+        {% if order.status != 'cancelled' %}
+        <div class="card card-premium p-4 mb-4 animate-fade-in" style="--delay: 200ms;">
+            <div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom">
+                <h4 class="fw-bold mb-0">Status Check</h4>
+                <span class="badge badge-{{ order.status }} rounded-pill px-4 py-2 fs-6 shadow-sm">
+                    {{ order.get_status_display }}
+                </span>
+            </div>
+            
+                <div class="stepper-progress-bg d-none d-sm-block"></div>
+                <div class="stepper-progress-bar d-none d-sm-block" style="width: {% if order.status == 'pending' %}0%{% elif order.status == 'preparing' %}25%{% elif order.status == 'ready' %}50%{% elif order.status == 'delivering' %}75%{% elif order.status == 'delivered' %}100%{% endif %};"></div>
+                
+                <div class="stepper-items d-flex flex-column flex-sm-row justify-content-between w-100 gap-4 gap-sm-0">
+                    <!-- Steps with icons and labels -->
+                    <div class="step-item active d-flex flex-sm-column align-items-center">
+                        <div class="step-icon me-3 me-sm-0"><i class="fas fa-receipt"></i></div>
+                        <div class="step-label">Placed</div>
+                    </div>
+                    <div class="step-item {% if order.status in 'preparing,ready,delivering,delivered' %}active{% endif %} d-flex flex-sm-column align-items-center">
+                        <div class="step-icon me-3 me-sm-0"><i class="fas fa-fire"></i></div>
+                        <div class="step-label">Cooking</div>
+                    </div>
+                    <div class="step-item {% if order.status in 'ready,delivering,delivered' %}active{% endif %} d-flex flex-sm-column align-items-center">
+                        <div class="step-icon me-3 me-sm-0"><i class="fas fa-concierge-bell"></i></div>
+                        <div class="step-label">Ready</div>
+                    </div>
+                    <div class="step-item {% if order.status in 'delivering,delivered' %}active{% endif %} d-flex flex-sm-column align-items-center">
+                        <div class="step-icon me-3 me-sm-0"><i class="fas {% if order.order_type == 'pickup' %}fa-walking{% else %}fa-motorcycle{% endif %}"></i></div>
+                        <div class="step-label">Transit</div>
+                    </div>
+                    <div class="step-item {% if order.status == 'delivered' %}active{% endif %} d-flex flex-sm-column align-items-center">
+                        <div class="step-icon me-3 me-sm-0"><i class="fas fa-check-circle"></i></div>
+                        <div class="step-label">Enjoy!</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <div class="glass-panel p-3 d-inline-block rounded-pill px-4 bg-primary bg-opacity-10 border-0">
+                    <p class="text-primary fw-medium mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% if order.status == 'pending' %}Your order is waiting to be accepted by the kitchen.
+                        {% elif order.status == 'preparing' %}The chef is hand-crafting your meal right now!
+                        {% elif order.status == 'ready' %}{% if order.order_type == 'pickup' %}Your meal is hot and ready for pickup!{% else %}Wait tight, delivery starts soon.{% endif %}
+                        {% elif order.status == 'delivering' %}{% if order.order_type == 'pickup' %}We are waiting for you at the counter!{% else %}Our staff is approaching your room now!{% endif %}
+                        {% elif order.status == 'delivered' %}Hope you enjoyed your meal! See you again.{% endif %}
+                    </p>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="bg-danger bg-opacity-10 d-inline-flex p-4 rounded-circle mb-4">
+                    <i class="fas fa-times-circle text-danger fa-4x"></i>
+                </div>
+                <h4 class="fw-bold">Order Cancelled</h4>
+                <p class="text-muted">This request has been withdrawn or cancelled.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Items Table -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="p-4 border-bottom">
+                <h5 class="fw-bold mb-0">Order Items</h5>
+            </div>
+            <div class="table-responsive table-responsive-stack">
+                <table class="table align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Item</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th class="text-end pe-4">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td class="ps-4" data-label="Item">
+                                <div class="d-flex align-items-center justify-content-end justify-content-sm-start">
+                                    <img src="{{ item.food_item.image.url }}" class="rounded-3 me-3 d-none d-sm-block" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div class="text-end text-sm-start">
+                                        <h6 class="mb-0 fw-bold">{{ item.food_item.name }}</h6>
+                                        {% if item.instructions %}
+                                        <div class="bg-light p-2 rounded extra-small mt-1 italic border-start border-warning border-4">
+                                            "{{ item.instructions }}"
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-label="Qty">{{ item.quantity }}</td>
+                            <td data-label="Price">₹{{ item.food_item.price }}</td>
+                            <td class="text-end pe-4 fw-bold" data-label="Subtotal">₹{{ item.food_item.price|multiply:item.quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="bg-light">
+                        <tr>
+                            <td colspan="3" class="ps-4 py-3 fw-bold">Total</td>
+                            <td class="text-end pe-4 py-3 fw-bold h4 text-teal">₹{{ order.total_price }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+            <h5 class="fw-bold mb-4">Order Details</h5>
+            <div class="mb-3">
+                <p class="text-muted small mb-1">Order Type</p>
+                <p class="fw-bold mb-0">
+                    <i class="fas {% if order.order_type == 'pickup' %}fa-utensils{% else %}fa-concierge-bell{% endif %} me-2 text-teal"></i>
+                    {{ order.get_order_type_display }}
+                </p>
+            </div>
+            {% if order.order_type == 'delivery' %}
+            <div class="mb-3">
+                <p class="text-muted small mb-1">Room Number</p>
+                <p class="fw-bold mb-0"><i class="fas fa-door-open me-2 text-teal"></i>{{ order.room_number }}</p>
+            </div>
+            {% endif %}
+            <div class="mb-3">
+                <p class="text-muted small mb-1">Payment Method</p>
+                <p class="fw-bold mb-0">
+                    <i class="fas {% if order.payment_method == 'cash' %}fa-money-bill-wave{% elif order.payment_method == 'card' %}fa-credit-card{% else %}fa-mobile-alt{% endif %} me-2 text-teal"></i>
+                    {{ order.get_payment_method_display }}
+                </p>
+            </div>
+            <div class="mb-3">
+                <p class="text-muted small mb-1">Order Date</p>
+                <p class="fw-bold mb-0"><i class="fas fa-calendar-alt me-2 text-teal"></i>{{ order.created_at|date:"F d, Y" }}</p>
+            </div>
+            <div class="mb-3">
+                <p class="text-muted small mb-1">Order Time</p>
+                <p class="fw-bold mb-0"><i class="fas fa-clock me-2 text-teal"></i>{{ order.created_at|date:"H:i A" }}</p>
+            </div>
+            {% if order.special_note %}
+            <div class="mb-3">
+                <p class="text-muted small mb-1">Special Note</p>
+                <div class="bg-light p-3 rounded small">
+                    {{ order.special_note }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Messaging Section -->
+            <div class="mt-4 pt-4 border-top">
+                <h5 class="fw-bold mb-3 d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-comments me-2 text-teal"></i>Messages</span>
+                    <span class="badge bg-light text-dark rounded-pill extra-small">{{ order.messages.count }}</span>
+                </h5>
+                
+                <div class="message-container bg-light rounded-4 p-3 mb-3" style="max-height: 250px; overflow-y: auto;">
+                    {% for msg in order.messages.all %}
+                    <div class="mb-3 {% if msg.is_staff_message %}text-start{% else %}text-end{% endif %} animate-fade-in">
+                        <div class="d-inline-block p-3 rounded-4 shadow-sm {% if msg.is_staff_message %}bg-white border-start border-teal border-4{% else %}bg-teal text-white{% endif %}" style="max-width: 85%;">
+                            <p class="mb-1 small fw-bold">{% if msg.is_staff_message %}Staff Update{% else %}{{ msg.sender.username }}{% endif %}</p>
+                            <p class="mb-1">{{ msg.content }}</p>
+                            <p class="extra-small mb-0 opacity-75">{{ msg.created_at|date:"H:i A" }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4 opacity-50">
+                        <i class="fas fa-comment-slash fa-2x mb-2"></i>
+                        <p class="small mb-0">No messages yet.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if user.profile.role in 'staff,manager' %}
+                <form action="{% url 'orders:send_order_message' order.id %}" method="post" class="mt-2">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" name="content" class="form-control border-0 bg-light rounded-start-pill px-3 shadow-none" placeholder="Type a message to guest..." required>
+                        <button class="btn btn-premium rounded-end-pill px-3" type="submit">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+
+            {% if order.status == 'delivered' %}
+            <div class="mt-4 pt-4 border-top">
+                <h5 class="fw-bold mb-3">Your Feedback</h5>
+                {% if not order.rating %}
+                <form action="{% url 'orders:submit_feedback' order.id %}" method="post" id="ratingForm">
+                    {% csrf_token %}
+                    <div class="mb-4 text-center">
+                        <label class="form-label d-block fw-bold text-dark mb-3">How was your experience?</label>
+                        <div class="rating-group d-inline-flex gap-2">
+                            {% for i in "54321" %}
+                            <input type="radio" class="btn-check rating-star-input" name="rating" id="star{{ i }}" value="{{ i }}" required>
+                            <label class="rating-star-label" for="star{{ i }}" title="{{ i }} stars">
+                                <i class="fas fa-star fa-2x"></i>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="glass-panel p-3 mb-4 border-0 shadow-sm rounded-4">
+                        <label class="form-label small fw-bold text-muted mb-2">Detailed Feedback</label>
+                        <textarea name="feedback" class="form-control border-0 bg-transparent shadow-none" rows="3" placeholder="Tell us about the food and service..." style="resize: none;"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-premium w-100 shadow-sm btn-premium-haptic">
+                        Submit Feedback
+                    </button>
+                </form>
+                {% else %}
+                <div class="glass-panel p-4 rounded-4 animate-fade-in shadow-sm border-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="text-warning me-2 d-flex gap-1" style="font-size: 1.25rem;">
+                            {% for i in "12345" %}
+                            <i class="{% if forloop.counter <= order.rating %}fas{% else %}far{% endif %} fa-star"></i>
+                            {% endfor %}
+                        </div>
+                        <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">{{ order.rating }}/5</span>
+                    </div>
+                    {% if order.feedback %}
+                    <div class="bg-white bg-opacity-50 p-3 rounded-3 border-start border-warning border-4">
+                        <p class="small mb-0 text-dark italic">"{{ order.feedback }}"</p>
+                    </div>
+                    {% endif %}
+                    <div class="mt-3 text-end">
+                        <small class="text-muted"><i class="fas fa-check-circle me-1"></i> Feedback Submitted</small>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if order.status == 'pending' and user.profile.role == 'customer' %}
+        <div class="d-grid">
+            <button type="button" class="btn btn-outline-danger btn-lg rounded-pill" data-bs-toggle="modal" data-bs-target="#cancelModalOrder">
+                Cancel Order
+            </button>
+        </div>
+        {% elif user.profile.role == 'manager' and order.status != 'cancelled' and order.status != 'delivered' %}
+        <div class="d-grid">
+            <form action="{% url 'orders:cancel_order' order.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-lg rounded-pill w-100 shadow-sm btn-premium-haptic">
+                    <i class="fas fa-ban me-2"></i> Cancel Order (Owner)
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

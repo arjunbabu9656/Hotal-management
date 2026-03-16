@@ -1,0 +1,74 @@
+{% extends "manager/base_manager.html" %}
+
+{% block header %}
+<div class="glass-panel p-4 mb-4 d-flex justify-content-between align-items-center animate-fade-in">
+    <div>
+        <h1 class="h3 fw-bold mb-0">Category Management</h1>
+        <p class="text-muted small mb-0">Organize your menu into intuitive sections</p>
+    </div>
+    <a href="{% url 'manager:category_add' %}" class="btn btn-premium shadow-sm">
+        <i class="fas fa-folder-plus me-2"></i> Add Category
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card card-premium overflow-hidden border-0 animate-fade-in" style="animation-delay: 0.1s;">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Category</th>
+                    <th>Description</th>
+                    <th>Items Count</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat in categories %}
+                <tr>
+                    <td class="ps-4">
+                        <div class="d-flex align-items-center py-2">
+                            {% if cat.image %}
+                            <img src="{{ cat.image.url }}" class="rounded-4 me-3" style="width: 45px; height: 45px; object-fit: cover;">
+                            {% else %}
+                            <div class="bg-primary bg-opacity-10 rounded-4 me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                <i class="fas fa-tags text-primary"></i>
+                            </div>
+                            {% endif %}
+                            <span class="fw-bold">{{ cat.name }}</span>
+                        </div>
+                    </td>
+                    <td class="text-muted small">{{ cat.description|truncatewords:10|default:"No description provided" }}</td>
+                    <td>
+                        <span class="badge bg-light text-dark border rounded-pill px-3">{{ cat.items.count }} Items</span>
+                    </td>
+                    <td>
+                        {% if cat.is_active %}
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">
+                            <i class="fas fa-check-circle me-1 small"></i> Active
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">
+                            <i class="fas fa-times-circle me-1 small"></i> Inactive
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="btn-group">
+                            <a href="{% url 'manager:category_edit' cat.pk %}" class="btn btn-action-pill me-2">
+                                <i class="fas fa-edit me-1 text-primary"></i> Edit
+                            </a>
+                            <a href="{% url 'manager:category_delete' cat.pk %}" class="btn btn-action-pill text-danger">
+                                <i class="fas fa-trash-alt me-1"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

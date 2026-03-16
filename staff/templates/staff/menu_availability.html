@@ -1,0 +1,113 @@
+{% extends "staff/base_staff.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Menu Availability</h2>
+    <div class="col-md-4">
+        <input type="text" id="menu-search" class="form-control rounded-pill" placeholder="Search dish...">
+    </div>
+</div>
+
+{% for category in categories %}
+<div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden category-section">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold text-teal">{{ category.name }}</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Item</th>
+                        <th>Price</th>
+                        <th class="text-center">Availability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in category.items.all %}
+                    <tr class="menu-item-row" data-name="{{ item.name|lower }}">
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ item.image.url }}" class="rounded-3 me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                <span class="fw-bold">{{ item.name }}</span>
+                            </div>
+                        </td>
+                        <td>₹{{ item.price }}</td>
+                        <td class="text-center">
+                            <div class="form-check form-switch d-inline-block">
+                                <input class="form-check-input" type="checkbox" role="switch" 
+                                    {% if item.is_available %}checked{% endif %}
+                                    onchange="toggleAvailability({{ item.id }}, this)">
+                                <label class="form-check-label status-label-{{ item.id }} {% if item.is_available %}text-success{% else %}text-danger{% endif %} fw-bold">
+                                    {% if item.is_available %}Available{% else %}Unavailable{% endif %}
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="statusToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Availability updated successfully!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleAvailability(itemId, checkbox) {
+    const url = `/staff/menu-availability/toggle/${itemId}/`;
+    const label = document.querySelector(`.status-label-${itemId}`);
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.is_available) {
+                label.textContent = 'Available';
+                label.classList.remove('text-danger');
+                label.classList.add('text-success');
+            } else {
+                label.textContent = 'Unavailable';
+                label.classList.remove('text-success');
+                label.classList.add('text-danger');
+            }
+            
+            const toast = new bootstrap.Toast(document.getElementById('statusToast'));
+            toast.show();
+        }
+    });
+}
+
+// Simple search logic
+document.getElementById('menu-search').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    document.querySelectorAll('.menu-item-row').forEach(row => {
+        const name = row.dataset.name;
+        row.style.display = name.includes(searchTerm) ? '' : 'none';
+    });
+    
+    // Hide empty categories
+    document.querySelectorAll('.category-section').forEach(section => {
+        const visibleItems = section.querySelectorAll('.menu-item-row:not([style*="display: none"])');
+        section.style.display = visibleItems.length === 0 ? 'none' : '';
+    });
+});
+</script>
+{% endblock %}

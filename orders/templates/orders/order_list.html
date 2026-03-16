@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders - HotelFood{% endblock %}
+
+{% block content %}
+<div class="glass-panel p-4 mb-4 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center animate-fade-in shadow-sm gap-3">
+    <div>
+        <h1 class="h3 fw-bold text-dark mb-0">My Orders</h1>
+        <p class="text-muted small mb-0">Track and manage your room service history</p>
+    </div>
+    <a href="{% url 'menu:menu_list' %}" class="btn btn-premium shadow-sm">
+        <i class="fas fa-plus me-2"></i> New Order
+    </a>
+</div>
+
+<div class="card card-premium overflow-hidden border-0 animate-fade-in" style="animation-delay: 0.1s;">
+    <div class="table-responsive table-responsive-stack">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Order #</th>
+                    <th>Timestamp</th>
+                    <th>Room</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr class="animate-fade-in" style="--delay: {{ forloop.counter0|add:2 }}00ms;">
+                    <td class="ps-4" data-label="Order #">
+                        <span class="fw-bold text-dark">#{{ order.id }}</span>
+                    </td>
+                    <td class="text-muted small" data-label="Timestamp">
+                        <div class="d-sm-flex align-items-center justify-content-end justify-content-sm-start">
+                            <i class="far fa-calendar-alt me-2 text-primary opacity-50 d-none d-sm-inline"></i>
+                            {{ order.created_at|date:"M d, H:i" }}
+                        </div>
+                    </td>
+                    <td data-label="Room">
+                        <span class="badge bg-light text-dark border-0 px-3 rounded-pill shadow-sm">
+                            <i class="fas fa-door-open me-1 opacity-50"></i> {{ order.room_number|default:"N/A" }}
+                        </span>
+                    </td>
+                    <td data-label="Items">
+                        <span class="text-dark small fw-medium">
+                            <i class="fas fa-box-open me-1 opacity-50"></i> {{ order.items.count }} Item{{ order.items.count|pluralize }}
+                        </span>
+                    </td>
+                    <td class="fw-bold text-primary" data-label="Total">₹{{ order.total_price }}</td>
+                    <td data-label="Status">
+                        <span class="badge badge-{{ order.status }} rounded-pill px-3 py-2">
+                            {% if order.status == 'pending' %}<i class="fas fa-clock me-1"></i>
+                            {% elif order.status == 'preparing' %}<i class="fas fa-fire me-1"></i>
+                            {% elif order.status == 'ready' %}<i class="fas fa-concierge-bell me-1"></i>
+                            {% elif order.status == 'delivering' %}<i class="fas fa-motorcycle me-1"></i>
+                            {% elif order.status == 'delivered' %}<i class="fas fa-check-circle me-1"></i>
+                            {% elif order.status == 'cancelled' %}<i class="fas fa-times-circle me-1"></i>
+                            {% endif %}
+                            {{ order.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="text-end pe-4" data-label="Actions">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-action-pill">
+                                <i class="fas fa-external-link-alt text-primary"></i> Track
+                            </a>
+                            {% if order.status == 'delivered' and not order.rating %}
+                            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-action-pill text-warning border-warning border-opacity-25 bg-warning bg-opacity-10">
+                                <i class="fas fa-star"></i> Rate Now
+                            </a>
+                            {% endif %}
+                            {% if order.status == 'pending' %}
+                            <button type="button" class="btn btn-action-pill text-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ order.id }}">
+                                <i class="fas fa-ban"></i> Cancel
+                            </button>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Cancel Modal -->
+                        <div class="modal fade" id="cancelModal{{ order.id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 rounded-4 shadow">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title fw-bold">Cancel Order #{{ order.id }}?</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body text-center py-4">
+                                        <i class="fas fa-exclamation-circle text-warning fa-4x mb-3"></i>
+                                        <p class="mb-0">Are you sure you want to cancel this order? This action cannot be undone.</p>
+                                    </div>
+                                    <div class="modal-footer border-0 justify-content-center pb-4">
+                                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Keep Order</button>
+                                        <form action="{% url 'orders:cancel_order' order.id %}" method="post" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger rounded-pill px-4">Yes, Cancel Order</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <i class="fas fa-receipt fa-4x text-muted mb-3"></i>
+                        <h5>No orders yet.</h5>
+                        <p class="text-muted">Once you place an order, it will appear here.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends "manager/base_manager.html" %}
+{% load order_extras %}
+
+{% block header %}Order Detail - #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+<div class="glass-panel p-4 mb-4 d-flex justify-content-between align-items-center animate-fade-in shadow-sm">
+    <div>
+        <h1 class="h4 fw-bold text-dark mb-0">Order Tracking #{{ order.id }}</h1>
+        <p class="text-muted small mb-0">Reviewing details for {{ order.customer.username }} • Room {{ order.room_number }}</p>
+    </div>
+    <span class="badge badge-{{ order.status }} rounded-pill px-4 py-2 fs-6 shadow-sm">
+        {% if order.status == 'pending' %}<i class="fas fa-clock me-1"></i>
+        {% elif order.status == 'preparing' %}<i class="fas fa-fire me-1"></i>
+        {% elif order.status == 'ready' %}<i class="fas fa-concierge-bell me-1"></i>
+        {% elif order.status == 'delivering' %}<i class="fas fa-motorcycle me-1"></i>
+        {% elif order.status == 'delivered' %}<i class="fas fa-check-circle me-1"></i>
+        {% elif order.status == 'cancelled' %}<i class="fas fa-times-circle me-1"></i>
+        {% endif %}
+        {{ order.get_status_display }}
+    </span>
+</div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Item</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th class="text-end pe-4">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% load order_extras %}
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ item.food_item.image.url }}" class="rounded-3 me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">{{ item.food_item.name }}</h6>
+                                        {% if item.instructions %}
+                                        <div class="bg-light p-2 rounded small mt-1 italic border-start border-warning border-4">
+                                            "{{ item.instructions }}"
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ item.quantity }}</td>
+                            <td>₹{{ item.food_item.price }}</td>
+                            <td class="text-end pe-4 fw-bold">₹{{ item.food_item.price|multiply:item.quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="bg-light">
+                        <tr>
+                            <td colspan="3" class="ps-4 py-3 fw-bold h5">Total Amount</td>
+                            <td class="text-end pe-4 py-3 fw-bold h4 text-teal">₹{{ order.total_price }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+
+        <!-- Customer Info -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+            <h5 class="fw-bold mb-3">Customer Information</h5>
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <h6 class="mb-0 fw-bold">{{ order.customer.username }}</h6>
+                    <small class="text-muted">{{ order.customer.email }}</small>
+                </div>
+            </div>
+            <div class="mb-3">
+                <p class="text-muted small mb-1">Room Number</p>
+                <p class="fw-bold mb-0"><i class="fas fa-door-open me-2 text-primary"></i>{{ order.room_number }}</p>
+            </div>
+            <div class="mb-3">
+                <p class="text-muted small mb-1">Phone</p>
+                <p class="fw-bold mb-0"><i class="fas fa-phone me-2 text-primary"></i>{{ order.customer.profile.phone|default:"N/A" }}</p>
+            </div>
+            {% if order.rating %}
+            <div class="mt-4 pt-3 border-top">
+                <p class="text-muted small mb-2">Customer Feedback</p>
+                <div class="glass-panel p-3 rounded-4 animate-fade-in shadow-sm border-0 bg-warning bg-opacity-10">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="text-warning me-2 d-flex gap-1 small">
+                            {% for i in "12345" %}
+                            <i class="{% if forloop.counter <= order.rating %}fas{% else %}far{% endif %} fa-star"></i>
+                            {% endfor %}
+                        </div>
+                        <span class="badge bg-warning text-dark bg-opacity-25 rounded-pill px-2 extra-small">{{ order.rating }}/5</span>
+                    </div>
+                    {% if order.feedback %}
+                    <p class="small mb-0 text-dark italic">"{{ order.feedback }}"</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if order.special_note %}
+            <div class="mt-4 pt-3 border-top">
+                <p class="text-muted small mb-2">Order Note</p>
+                <div class="alert alert-info py-2 px-3 small border-0 mb-0">
+                    {{ order.special_note }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

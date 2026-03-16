@@ -1,0 +1,81 @@
+{% extends "manager/base_manager.html" %}
+
+{% block header %}Order Archives{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <h6 class="fw-bold mb-3"><i class="fas fa-filter me-2 text-primary"></i>Filter by Date</h6>
+            <form method="get" class="d-flex gap-2">
+                <input type="date" name="date" class="form-control" value="{{ date_query|default:'' }}">
+                <button type="submit" class="btn btn-primary px-4 rounded-pill">Search</button>
+                {% if date_query %}
+                <a href="{% url 'manager:order_archive' %}" class="btn btn-outline-secondary px-4 rounded-pill">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden animate-fade-in">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold"><i class="fas fa-shopping-cart me-2 text-primary"></i>Archived Orders</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">ID</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Order Type</th>
+                    <th>Payment</th>
+                    <th>Total</th>
+                    <th>Rating</th>
+                    <th class="text-end pe-4">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td class="ps-4 fw-bold">#{{ order.id }}</td>
+                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                    <td>{{ order.customer.username }}</td>
+                    <td>
+                        <span class="badge bg-light text-dark border">
+                            {{ order.get_order_type_display }}
+                        </span>
+                    </td>
+                    <td>{{ order.get_payment_method_display }}</td>
+                    <td class="fw-bold text-teal">₹{{ order.total_price }}</td>
+                    <td>
+                        {% if order.rating %}
+                        <span class="text-warning small">
+                            {% for i in "12345" %}
+                            <i class="{% if forloop.counter <= order.rating %}fas{% else %}far{% endif %} fa-star"></i>
+                            {% endfor %}
+                        </span>
+                        {% else %}
+                        <span class="text-muted small">No Rating</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        <a href="{% url 'manager:order_detail' order.id %}" class="btn btn-light btn-sm rounded-pill border">View Details</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-5">
+                        <div class="text-muted">
+                            <i class="fas fa-archive fa-3x mb-3"></i>
+                            <p class="mb-0">No archived orders found{% if date_query %} for this date{% endif %}.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "manager/base_manager.html" %}
+
+{% block header %}Confirm Deletion{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 text-center p-5">
+            <div class="display-1 text-danger mb-4"><i class="fas fa-exclamation-triangle"></i></div>
+            <h3 class="fw-bold mb-3">Are you sure?</h3>
+            <p class="text-muted mb-4">You are about to delete the {{ type|lower }} <strong>"{{ item.name }}"</strong>. This action cannot be undone.</p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="javascript:history.back()" class="btn btn-light rounded-pill px-4 border me-md-2">Cancel, Keep it</a>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">Yes, Delete now</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
