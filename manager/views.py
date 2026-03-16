@@ -156,7 +156,7 @@ def staff_list(request):
     return render(request, 'manager/staff_list.html', {'staff_users': staff_users})
 
 @login_required
-@role_required(allowed_roles=['manager', 'owner'])
+@role_required(allowed_roles=['owner'])
 def staff_add(request):
     from .forms import StaffUserForm
     if request.method == 'POST':
@@ -170,7 +170,7 @@ def staff_add(request):
     return render(request, 'manager/staff_form.html', {'form': form, 'title': 'Add Staff Member'})
 
 @login_required
-@role_required(allowed_roles=['manager', 'owner'])
+@role_required(allowed_roles=['owner'])
 def staff_edit(request, pk):
     from .forms import StaffUserForm
     staff = get_object_or_404(User, pk=pk)
@@ -185,7 +185,7 @@ def staff_edit(request, pk):
     return render(request, 'manager/staff_form.html', {'form': form, 'staff': staff, 'title': 'Edit Staff Member'})
 
 @login_required
-@role_required(allowed_roles=['manager', 'owner'])
+@role_required(allowed_roles=['owner'])
 def staff_delete(request, pk):
     staff = get_object_or_404(User, pk=pk)
     if staff == request.user:
