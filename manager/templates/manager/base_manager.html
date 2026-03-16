@@ -38,9 +38,11 @@
                     <a class="sidebar-link {% if url_name == 'category_list' or 'category_' in url_name %}active{% endif %}" href="{% url 'manager:category_list' %}">
                         <i class="fas fa-tags"></i> Categories
                     </a>
+                    {% if user.profile.role == 'owner' %}
                     <a class="sidebar-link {% if url_name == 'staff_list' or url_name == 'staff_add' or url_name == 'staff_edit' %}active{% endif %}" href="{% url 'manager:staff_list' %}">
                         <i class="fas fa-user-tie"></i> Staff
                     </a>
+                    {% endif %}
                     {% if user.profile.role == 'owner' %}
                     <a class="sidebar-link {% if url_name == 'reports' %}active{% endif %}" href="{% url 'manager:reports' %}">
                         <i class="fas fa-chart-line"></i> Reports
