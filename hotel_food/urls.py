@@ -10,7 +10,7 @@ urlpatterns = [
     path('orders/', include('orders.urls')),
     path('staff/', include('staff.urls')),
     path('manager/', include('manager.urls')),
-    path('', include('accounts.urls')), # Main entry point for role-aware routing
+    path('', include('menu.urls')), # Set Menu as the default home page
 ]
 
 if settings.DEBUG:

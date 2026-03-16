@@ -23,7 +23,7 @@
     <!-- Customer Navbar -->
     <nav class="navbar navbar-expand-lg glass-panel sticky-top mx-2 mx-sm-3 mt-2 mt-sm-3 rounded-pill shadow-sm border-0 bg-white bg-opacity-75">
         <div class="container-fluid px-2 px-sm-4">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'accounts:index' %}">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'menu:menu_list' %}">
                 <div class="bg-primary rounded-circle p-1 me-1 me-sm-2 d-inline-flex">
                     <i class="fas fa-hotel text-white extra-small"></i>
                 </div>
@@ -69,7 +69,7 @@
                             <a class="nav-link px-3 fw-medium text-dark" href="{% url 'accounts:login' %}">Sign In</a>
                         </li>
                         <li class="nav-item ms-lg-3">
-                            <a class="btn btn-premium shadow-sm" href="{% url 'accounts:register' %}">Become a Guest</a>
+                            <a class="btn btn-premium shadow-sm" href="{% url 'accounts:register' %}">Sign Up</a>
                         </li>
                     {% endif %}
                 </ul>
