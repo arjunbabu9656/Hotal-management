@@ -19,7 +19,7 @@ class UserAdmin(BaseUserAdmin):
     def get_role(self, instance):
         try:
             return instance.profile.get_role_display()
-        except UserProfile.DoesNotExist:
+        except (UserProfile.DoesNotExist, AttributeError):
             return "No Profile"
     get_role.short_description = 'User Role'
 
