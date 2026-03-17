@@ -7,13 +7,17 @@ class ActiveUserMiddleware:
 
     def __call__(self, request):
         if request.user.is_authenticated:
-            now = timezone.now()
-            # Only update if last_seen is older than 60 seconds to avoid constant DB writes
-            last_seen = request.user.profile.last_seen
-            
-            if not last_seen or now > last_seen + timedelta(seconds=60):
-                request.user.profile.last_seen = now
-                request.user.profile.save(update_fields=['last_seen'])
+            try:
+                profile = request.user.profile
+                now = timezone.now()
+                last_seen = profile.last_seen
+                
+                if not last_seen or now > last_seen + timedelta(seconds=60):
+                    profile.last_seen = now
+                    profile.save(update_fields=['last_seen'])
+            except:
+                # Fallback if profile doesn't exist yet
+                pass
         
         response = self.get_response(request)
         return response
