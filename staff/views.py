@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.utils import timezone
-from accounts.decorators import role_required
+from accounts.decorators import role_required, owner_required
 from orders.models import Order, OrderMessage
 from menu.models import FoodItem, Category
 from orders.views import assign_order_to_role
@@ -21,7 +21,7 @@ def dashboard(request):
     })
 
 @login_required
-@role_required(allowed_roles=['staff', 'owner'])
+@owner_required
 def update_order_status(request, order_id, new_status):
     order = get_object_or_404(Order, id=order_id)
     
@@ -57,7 +57,7 @@ def menu_availability(request):
     return render(request, 'staff/menu_availability.html', {'categories': categories})
 
 @login_required
-@role_required(allowed_roles=['staff', 'owner'])
+@owner_required
 def toggle_availability(request, item_id):
     item = get_object_or_404(FoodItem, id=item_id)
     item.is_available = not item.is_available

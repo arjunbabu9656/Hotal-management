@@ -13,13 +13,11 @@
             <input type="text" class="form-control ps-5 rounded-3 border-0 shadow-sm" placeholder="Search team..." style="height: 45px;">
         </div>
     </div>
-    {% if user.profile.role == 'owner' %}
     <div class="col-md-8 text-md-end">
-        <a href="{% url 'manager:staff_add' %}" class="btn btn-dark px-4 rounded-3">
-            <i class="fas fa-plus me-2"></i> Add Team Member
-        </a>
+        <div class="d-inline-flex alert alert-info py-2 px-3 small border-0 mb-0 rounded-pill">
+            <i class="fas fa-info-circle me-2 mt-1"></i><strong>Monitor Mode:</strong> Staff are managed in Admin Only.
+        </div>
     </div>
-    {% endif %}
 </div>
 
 <div class="animate-in">
@@ -71,11 +69,7 @@
                     {% endif %}
                 </td>
                 <td class="text-end">
-                    {% if user.profile.role == 'owner' %}
-                    <a href="{% url 'manager:staff_edit' staff.pk %}" class="btn btn-sm btn-white border rounded-2 px-3">Edit</a>
-                    {% else %}
                     <span class="text-muted small">View Only</span>
-                    {% endif %}
                 </td>
             </tr>
             {% empty %}

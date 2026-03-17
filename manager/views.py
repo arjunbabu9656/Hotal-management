@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count, F, Q
 from django.utils import timezone
 from django.contrib import messages
-from accounts.decorators import role_required
+from accounts.decorators import role_required, owner_required
 from orders.models import Order, OrderItem
 from menu.models import FoodItem, Category
 from menu.forms import FoodItemForm, CategoryForm
@@ -70,7 +70,7 @@ def menu_list(request):
     return render(request, 'manager/menu.html', {'items': items, 'categories': categories})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@owner_required
 def food_item_add(request):
     if request.method == 'POST':
         form = FoodItemForm(request.POST, request.FILES)
@@ -83,7 +83,7 @@ def food_item_add(request):
     return render(request, 'manager/menu_form.html', {'form': form, 'title': 'Add Food Item'})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@owner_required
 def food_item_edit(request, pk):
     item = get_object_or_404(FoodItem, pk=pk)
     if request.method == 'POST':
@@ -97,7 +97,7 @@ def food_item_edit(request, pk):
     return render(request, 'manager/menu_form.html', {'form': form, 'item': item, 'title': 'Edit Food Item'})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@owner_required
 def food_item_delete(request, pk):
     item = get_object_or_404(FoodItem, pk=pk)
     if request.method == 'POST':
@@ -113,7 +113,7 @@ def category_list(request):
     return render(request, 'manager/category_list.html', {'categories': categories})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@owner_required
 def category_add(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST, request.FILES)
@@ -126,7 +126,7 @@ def category_add(request):
     return render(request, 'manager/menu_form.html', {'form': form, 'title': 'Add Category'})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@owner_required
 def category_edit(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -140,7 +140,7 @@ def category_edit(request, pk):
     return render(request, 'manager/menu_form.html', {'form': form, 'title': 'Edit Category'})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@owner_required
 def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -172,7 +172,7 @@ def user_list(request):
     return render(request, 'manager/user_list.html', {'users': users_qs})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@owner_required
 def staff_add(request):
     from .forms import StaffUserForm
     if request.method == 'POST':
@@ -186,7 +186,7 @@ def staff_add(request):
     return render(request, 'manager/staff_form.html', {'form': form, 'title': 'Create New User'})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@owner_required
 def staff_edit(request, pk):
     from .forms import StaffUserForm
     user_to_edit = get_object_or_404(User, pk=pk)
@@ -201,7 +201,7 @@ def staff_edit(request, pk):
     return render(request, 'manager/staff_form.html', {'form': form, 'staff': user_to_edit, 'title': 'Edit User Profile'})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@owner_required
 def staff_delete(request, pk):
     staff = get_object_or_404(User, pk=pk)
     if staff == request.user:
@@ -250,7 +250,7 @@ def order_archive(request):
     })
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@owner_required
 def reset_daily_orders(request):
     if request.method == 'POST':
         # Archive all delivered or cancelled orders

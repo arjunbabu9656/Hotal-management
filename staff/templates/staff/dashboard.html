@@ -78,33 +78,9 @@
             </div>
             <div class="card-footer bg-white border-top-0 pb-4 pt-0">
                 <div class="d-grid gap-2">
-                    {% if order.status == 'pending' %}
-                    <button data-action="status-update" data-order-id="{{ order.id }}" data-status="preparing" class="btn btn-premium">
-                        <i class="fas fa-fire me-2"></i> Pick Up Order
-                    </button>
-                    {% elif order.status == 'preparing' %}
-                    <button data-action="status-update" data-order-id="{{ order.id }}" data-status="ready" class="btn btn-success rounded-pill fw-bold">
-                        <i class="fas fa-check me-2"></i> Ready to Serve
-                    </button>
-                    {% elif order.status == 'ready' %}
-                        {% if order.order_type == 'delivery' %}
-                        <button data-action="status-update" data-order-id="{{ order.id }}" data-status="delivering" class="btn btn-info text-white rounded-pill fw-bold">
-                            <i class="fas fa-motorcycle me-2"></i> Start Delivery
-                        </button>
-                        {% else %}
-                        <button data-action="status-update" data-order-id="{{ order.id }}" data-status="delivered" class="btn btn-premium" style="background-color: var(--secondary);">
-                            <i class="fas fa-user-check me-2"></i> Delivered
-                        </button>
-                        {% endif %}
-                    {% elif order.status == 'delivering' %}
-                    <button data-action="status-update" data-order-id="{{ order.id }}" data-status="delivered" class="btn btn-premium" style="background-color: var(--secondary);">
-                        <i class="fas fa-house-user me-2"></i> Arrived at Room
-                    </button>
-                    {% endif %}
-                    
-                    <button type="button" class="btn btn-light rounded-pill btn-sm fw-bold border" data-bs-toggle="modal" data-bs-target="#messageModal" data-order-id="{{ order.id }}">
-                        <i class="fas fa-comment shadow-sm me-2 text-teal"></i> Message Guest
-                    </button>
+                    <div class="alert alert-info py-2 px-3 small border-0 mb-0 rounded-3 text-center">
+                        <i class="fas fa-info-circle me-2"></i><strong>Read-Only Mode:</strong> Actions are restricted to the Admin Panel.
+                    </div>
                 </div>
             </div>
         </div>
