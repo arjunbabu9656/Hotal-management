@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error (500) - HotelFood{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center pt-md-5">
+        <div class="col-md-7 text-center">
+            <!-- Glassmorphic Error Card -->
+            <div class="glass-panel p-5 rounded-4 shadow-lg border-0 bg-white bg-opacity-75">
+                <div class="mb-4">
+                    <span class="p-4 bg-danger bg-opacity-10 rounded-circle d-inline-block">
+                        <i class="fas fa-tools fa-4x text-danger animate-pulse"></i>
+                    </span>
+                </div>
+                
+                <h1 class="display-3 fw-bold text-dark tracking-tight mb-3">500</h1>
+                <h2 class="h3 fw-semibold text-dark mb-4">Something went wrong on our end</h2>
+                
+                <p class="text-secondary lead mb-5 mx-auto" style="max-width: 500px;">
+                    We are experiencing a temporary technical issue. Our team has been notified and is working to fix it. Please try refreshing the page or come back in a few minutes.
+                </p>
+                
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                    <button onclick="location.reload()" class="btn btn-premium px-4 py-2 rounded-pill shadow-sm">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh Page
+                    </button>
+                    <a href="{% url 'menu:menu_list' %}" class="btn btn-light border px-4 py-2 rounded-pill">
+                        <i class="fas fa-home me-2"></i>Go to Menu
+                    </a>
+                </div>
+                
+                {% if debug %}
+                <div class="mt-5 p-3 bg-light rounded-3 text-start small">
+                    <p class="fw-bold text-danger mb-1 border-bottom pb-1">Debug Info:</p>
+                    <code class="text-break">{{ exception }}</code>
+                </div>
+                {% endif %}
+            </div>
+            
+            <p class="mt-4 text-muted small">Reference ID: <span class="bg-light px-2 py-1 rounded-pill">{% now "U-r" %}</span></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes pulse-animation {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    .animate-pulse {
+        animation: pulse-animation 2s infinite ease-in-out;
+    }
+    .tracking-tight { letter-spacing: -2px; }
+</style>
+{% endblock %}
