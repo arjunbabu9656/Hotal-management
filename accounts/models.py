@@ -45,7 +45,12 @@ class UserProfile(models.Model):
         return False
 
     def __str__(self):
-        return f"{self.user.username} - {self.role}"
+        try:
+            if self.user:
+                return f"{self.user.username} - {self.role}"
+        except Exception:
+            pass
+        return f"Orphaned Profile - {self.role}"
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

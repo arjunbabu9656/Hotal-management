@@ -41,6 +41,15 @@ admin.site.register(User, UserAdmin)
 # 4. Optional: Register UserProfile separately for direct access
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'role', 'phone', 'room_number')
+    list_display = ('safe_user', 'role', 'phone', 'room_number')
     list_filter = ('role', 'staff_role')
     search_fields = ('user__username', 'phone')
+
+    def safe_user(self, obj):
+        try:
+            if obj.user:
+                return obj.user.username
+        except Exception:
+            pass
+        return "N/A (No User)"
+    safe_user.short_description = 'User'

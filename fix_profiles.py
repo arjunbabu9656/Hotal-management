@@ -22,7 +22,14 @@ def fix():
             profile.save()
             print(f"Updated {user.username} to 'owner' role.")
     
-    print(f"Finished fixing profiles. Created {count} missing profiles.")
+    # Phase 2: Cleanup orphaned profiles
+    orphans = UserProfile.objects.filter(user__isnull=True)
+    orphan_count = orphans.count()
+    if orphan_count > 0:
+        orphans.delete()
+        print(f"Deleted {orphan_count} orphaned profiles.")
+    
+    print(f"Finished fixing profiles. Created {count} missing, cleaned {orphan_count} orphans.")
 
 if __name__ == "__main__":
     fix()
