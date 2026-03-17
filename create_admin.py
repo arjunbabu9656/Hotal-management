@@ -1,9 +1,11 @@
 import os
 import django
-from django.contrib.auth.models import User
 
+# Set settings BEFORE importing models
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hotel_food.settings')
 django.setup()
+
+from django.contrib.auth.models import User
 
 def create_admin():
     username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
