@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 def create_admin():
     username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
     password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
-    email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'arjunb7025@gmail.com')
+    email = os.environ.get('DJANGO_SUPERUSER_EMAIL')
 
     if username and password:
         if not User.objects.filter(username=username).exists():
