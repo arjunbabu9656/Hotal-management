@@ -24,6 +24,7 @@ urlpatterns = [
     path('staff/add/', views.staff_add, name='staff_add'),
     path('staff/edit/<int:pk>/', views.staff_edit, name='staff_edit'),
     path('staff/delete/<int:pk>/', views.staff_delete, name='staff_delete'),
+    path('users/', views.user_list, name='user_list'),
     path('reports/', views.reports, name='reports'),
     path('archive/', views.order_archive, name='order_archive'),
     path('reset-day/', views.reset_daily_orders, name='reset_daily_orders'),

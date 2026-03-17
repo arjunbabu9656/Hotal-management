@@ -1,29 +1,123 @@
 {% extends "manager/base_manager.html" %}
 {% load crispy_forms_tags %}
 
-{% block header %}{{ title }}{% endblock %}
+{% block header %}
+<h1>{{ title }}</h1>
+<p class="text-muted small mb-0">Modify account details and access permissions</p>
+{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card border-0 shadow-sm rounded-4 p-4">
-            <h5 class="fw-bold mb-4">
-                <i class="fas {% if 'Edit' in title %}fa-user-edit{% else %}fa-user-plus{% endif %} me-2 text-teal"></i>
-                {{ title }}
-            </h5>
+<div class="row animate-in">
+    <div class="col-lg-8">
+        <div class="admin-card p-5">
+            <div class="d-flex align-items-center gap-4 mb-5 pb-4 border-bottom">
+                <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center fw-bold" style="width: 80px; height: 80px; font-size: 2rem;">
+                    {% if staff %}{{ staff.username|first|upper }}{% else %}?{% endif %}
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0">{% if staff %}{{ staff.username }}{% else %}New User{% endif %}</h2>
+                    <p class="text-muted mb-0">{% if staff %}{{ staff.email|default:"No email set" }}{% else %}Enter user details below{% endif %}</p>
+                </div>
+            </div>
             
-            <form method="post">
+            <form method="post" class="premium-form">
                 {% csrf_token %}
-                {{ form|crispy }}
                 
-                <div class="d-grid gap-2 mt-4">
-                    <button type="submit" class="btn btn-teal btn-lg rounded-pill">
-                        {% if 'Edit' in title %}Update Profile{% else %}Create Staff Account{% endif %}
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        {{ form.username|as_crispy_field }}
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        {{ form.email|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        {{ form.first_name|as_crispy_field }}
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        {{ form.last_name|as_crispy_field }}
+                    </div>
+                </div>
+
+                <hr class="my-4 opacity-5">
+
+                <div class="row align-items-end">
+                    <div class="col-md-6 mb-4">
+                        {{ form.role|as_crispy_field }}
+                        <div class="extra-small text-muted mt-1"><i class="fas fa-info-circle me-1"></i> Defines portal access level</div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        {{ form.phone|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        {{ form.staff_role|as_crispy_field }}
+                        <div class="extra-small text-muted mt-1"><i class="fas fa-id-badge me-1"></i> Only applicable for 'Staff' role</div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        {{ form.password|as_crispy_field }}
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-3 mt-5 pt-4 border-top">
+                    <button type="submit" class="btn btn-admin px-5">
+                        <i class="fas fa-check-circle me-2"></i> Save Changes
                     </button>
-                    <a href="{% url 'manager:staff_list' %}" class="btn btn-light rounded-pill border">Cancel</a>
+                    <a href="{% url 'manager:user_list' %}" class="btn btn-admin-outline">
+                        Cancel
+                    </a>
                 </div>
             </form>
         </div>
     </div>
+    
+    <div class="col-lg-4">
+        <div class="admin-card bg-light border-0 shadow-none">
+            <h6 class="fw-bold mb-3"><i class="fas fa-shield-halved me-2"></i> Role Permissions</h6>
+            <ul class="list-unstyled small text-muted">
+                <li class="mb-3">
+                    <strong class="text-dark d-block">Owner</strong>
+                    Full control over every aspect of the system.
+                </li>
+                <li class="mb-3">
+                    <strong class="text-dark d-block">Manager</strong>
+                    Oversees orders, archives, and reporting. No user management.
+                </li>
+                <li class="mb-3">
+                    <strong class="text-dark d-block">Staff</strong>
+                    Operational access to kitchen and delivery dashboards.
+                </li>
+                <li class="mb-0">
+                    <strong class="text-dark d-block">Customer</strong>
+                    Menu access and order placement only.
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
+
+<style>
+    .premium-form .form-control, .premium-form .form-select {
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e1e1e1;
+        background-color: #fafafa;
+        transition: all 0.2s;
+    }
+    .premium-form .form-control:focus, .premium-form .form-select:focus {
+        background-color: #fff;
+        border-color: #000;
+        box-shadow: 0 0 0 4px rgba(0,0,0,0.05);
+    }
+    .premium-form label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #555;
+        margin-bottom: 0.5rem;
+    }
+</style>
 {% endblock %}

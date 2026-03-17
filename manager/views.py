@@ -150,10 +150,26 @@ def category_delete(request, pk):
     return render(request, 'manager/confirm_delete.html', {'item': category, 'type': 'Category'})
 
 @login_required
-@role_required(allowed_roles=['manager', 'owner'])
+@role_required(allowed_roles=['owner', 'manager'])
 def staff_list(request):
+    # Managers can see the staff list but only the owner can manage all users
     staff_users = User.objects.filter(profile__role__in=['staff', 'manager', 'owner']).select_related('profile')
     return render(request, 'manager/staff_list.html', {'staff_users': staff_users})
+
+@login_required
+@role_required(allowed_roles=['owner'])
+def user_list(request):
+    # This is for the Owner to see everyone (Customers, Staff, Managers)
+    users_qs = User.objects.all().select_related('profile').order_by('-date_joined')
+    
+    # Internal check to fix any missing profiles on the fly
+    for u in users_qs:
+        try:
+            profile = u.profile
+        except UserProfile.DoesNotExist:
+            UserProfile.objects.create(user=u)
+            
+    return render(request, 'manager/user_list.html', {'users': users_qs})
 
 @login_required
 @role_required(allowed_roles=['owner'])
@@ -162,27 +178,27 @@ def staff_add(request):
     if request.method == 'POST':
         form = StaffUserForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Staff member added successfully.")
-            return redirect('manager:staff_list')
+            user = form.save()
+            messages.success(request, f"User {user.username} created successfully.")
+            return redirect('manager:user_list')
     else:
         form = StaffUserForm()
-    return render(request, 'manager/staff_form.html', {'form': form, 'title': 'Add Staff Member'})
+    return render(request, 'manager/staff_form.html', {'form': form, 'title': 'Create New User'})
 
 @login_required
 @role_required(allowed_roles=['owner'])
 def staff_edit(request, pk):
     from .forms import StaffUserForm
-    staff = get_object_or_404(User, pk=pk)
+    user_to_edit = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
-        form = StaffUserForm(request.POST, instance=staff)
+        form = StaffUserForm(request.POST, instance=user_to_edit)
         if form.is_valid():
             form.save()
-            messages.success(request, f"Profile for {staff.username} updated.")
-            return redirect('manager:staff_list')
+            messages.success(request, f"Profile for {user_to_edit.username} updated.")
+            return redirect('manager:user_list')
     else:
-        form = StaffUserForm(instance=staff)
-    return render(request, 'manager/staff_form.html', {'form': form, 'staff': staff, 'title': 'Edit Staff Member'})
+        form = StaffUserForm(instance=user_to_edit)
+    return render(request, 'manager/staff_form.html', {'form': form, 'staff': user_to_edit, 'title': 'Edit User Profile'})
 
 @login_required
 @role_required(allowed_roles=['owner'])

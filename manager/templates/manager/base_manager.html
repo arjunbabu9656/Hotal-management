@@ -38,8 +38,11 @@
                         <a class="admin-nav-link {% if url_name == 'category_list' or 'category_' in url_name %}active{% endif %}" href="{% url 'manager:category_list' %}">
                             <i class="fas fa-layer-group"></i> Categories
                         </a>
-                        <a class="admin-nav-link {% if url_name == 'staff_list' or 'staff_' in url_name %}active{% endif %}" href="{% url 'manager:staff_list' %}">
-                            <i class="fas fa-users-gear"></i> Team
+                        <a class="admin-nav-link {% if url_name == 'user_list' or 'staff_' in url_name %}active{% endif %}" href="{% url 'manager:user_list' %}">
+                            <i class="fas fa-users-gear"></i> User Management
+                        </a>
+                        <a class="admin-nav-link {% if url_name == 'staff_list' %}active{% endif %}" href="{% url 'manager:staff_list' %}">
+                            <i class="fas fa-user-tie"></i> Team (Staff List)
                         </a>
                         <a class="admin-nav-link {% if url_name == 'reports' %}active{% endif %}" href="{% url 'manager:reports' %}">
                             <i class="fas fa-chart-bar"></i> Analytics
@@ -56,7 +59,9 @@
                             </div>
                             <div class="overflow-hidden">
                                 <p class="mb-0 fw-bold small text-truncate">{{ user.username }}</p>
-                                <p class="mb-0 extra-small text-muted text-capitalize" style="font-size: 0.7rem;">{{ user.profile.role }}</p>
+                                <p class="mb-0 extra-small text-muted text-capitalize" style="font-size: 0.7rem;">
+                                    {% if user.profile %}{{ user.profile.role }}{% else %}Administrator{% endif %}
+                                </p>
                             </div>
                         </div>
                         <a class="admin-nav-link text-danger" href="{% url 'accounts:logout' %}">
