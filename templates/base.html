@@ -52,12 +52,16 @@
                                 <i class="far fa-user-circle me-1"></i> {{ user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 mt-3">
-                                {% if user.profile.role == 'owner' %}
-                                <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'manager:dashboard' %}"><i class="fas fa-chart-pie me-2 opacity-75"></i>Owner Dashboard</a></li>
-                                {% elif user.profile.role == 'manager' %}
-                                <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'manager:dashboard' %}"><i class="fas fa-chart-pie me-2 opacity-75"></i>Manager Dashboard</a></li>
-                                {% elif user.profile.role == 'staff' %}
-                                <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'staff:dashboard' %}"><i class="fas fa-kitchen-set me-2 opacity-75"></i>Kitchen Dashboard</a></li>
+                                {% if user.profile %}
+                                    {% if user.profile.role == 'owner' or user.is_superuser %}
+                                    <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'manager:dashboard' %}"><i class="fas fa-chart-pie me-2 opacity-75"></i>Owner Dashboard</a></li>
+                                    {% elif user.profile.role == 'manager' %}
+                                    <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'manager:dashboard' %}"><i class="fas fa-chart-pie me-2 opacity-75"></i>Manager Dashboard</a></li>
+                                    {% elif user.profile.role == 'staff' %}
+                                    <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'staff:dashboard' %}"><i class="fas fa-kitchen-set me-2 opacity-75"></i>Kitchen Dashboard</a></li>
+                                    {% endif %}
+                                {% elif user.is_superuser %}
+                                    <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'manager:dashboard' %}"><i class="fas fa-chart-pie me-2 opacity-75"></i>Owner Dashboard</a></li>
                                 {% endif %}
                                 <li><a class="dropdown-item py-2" href="#"><i class="fas fa-cog me-2 opacity-50"></i>Settings</a></li>
                                 <li><hr class="dropdown-divider"></li>
