@@ -18,9 +18,11 @@ class UserAdmin(BaseUserAdmin):
 
     def get_role(self, instance):
         try:
-            return instance.profile.get_role_display()
-        except (UserProfile.DoesNotExist, AttributeError):
+            if hasattr(instance, 'profile') and instance.profile:
+                return instance.profile.get_role_display()
             return "No Profile"
+        except Exception:
+            return "Error Loading Role"
     get_role.short_description = 'User Role'
 
     def get_inline_instances(self, request, obj=None):

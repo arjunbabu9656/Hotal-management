@@ -26,12 +26,22 @@ class UserProfile(models.Model):
     last_seen = models.DateTimeField(null=True, blank=True)
 
     @property
+    def get_role(self):
+        try:
+            return self.get_role_display()
+        except Exception:
+            return "Error Loading Role"
+
+    @property
     def is_online(self):
-        if self.last_seen:
-            from django.utils import timezone
-            from datetime import timedelta
-            now = timezone.now()
-            return now < self.last_seen + timedelta(minutes=5)
+        try:
+            if self.last_seen:
+                from django.utils import timezone
+                from datetime import timedelta
+                now = timezone.now()
+                return now < self.last_seen + timedelta(minutes=5)
+        except Exception:
+            return False
         return False
 
     def __str__(self):
