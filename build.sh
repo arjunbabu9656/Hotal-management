@@ -11,3 +11,6 @@ python manage.py migrate
 if [[ $DJANGO_SUPERUSER_USERNAME ]]; then
   python manage.py createsuperuser --no-input || true
 fi
+
+# Ensure all users (including automated superuser) have profiles
+python fix_profiles.py
