@@ -29,8 +29,9 @@ class UserProfile(models.Model):
     def is_online(self):
         if self.last_seen:
             from django.utils import timezone
+            from datetime import timedelta
             now = timezone.now()
-            return now < self.last_seen + timezone.timedelta(minutes=5)
+            return now < self.last_seen + timedelta(minutes=5)
         return False
 
     def __str__(self):

@@ -29,7 +29,10 @@ class UserAdmin(BaseUserAdmin):
         return super(UserAdmin, self).get_inline_instances(request, obj)
 
 # 3. Safe Re-registration
-admin.site.unregister(User)
+try:
+    admin.site.unregister(User)
+except admin.sites.NotRegistered:
+    pass
 admin.site.register(User, UserAdmin)
 
 # 4. Optional: Register UserProfile separately for direct access
