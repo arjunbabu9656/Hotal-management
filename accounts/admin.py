@@ -29,9 +29,10 @@ class UserAdmin(BaseUserAdmin):
         return super(UserAdmin, self).get_inline_instances(request, obj)
 
 # 3. Safe Re-registration
+from django.contrib.admin.sites import NotRegistered
 try:
     admin.site.unregister(User)
-except admin.sites.NotRegistered:
+except NotRegistered:
     pass
 admin.site.register(User, UserAdmin)
 
