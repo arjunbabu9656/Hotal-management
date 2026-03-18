@@ -186,83 +186,123 @@ body.admin-mode {
     animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
-/* Mobile Responsiveness */
+/* Mobile Responsiveness (Ultra Small 360px support) */
 @media (max-width: 768px) {
     .admin-header {
-        padding: 1rem;
+        padding: 1.25rem 1rem !important;
         margin-bottom: 1rem;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem;
     }
     
     .admin-header h1 {
         font-size: 1.25rem;
     }
+
+    .admin-header .d-flex.gap-3 {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .admin-header .btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.85rem;
+    }
     
     .px-4.px-lg-5 {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
     }
     
     .admin-card {
         padding: 1rem;
+        border-radius: 12px;
     }
     
     .admin-stat-value {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
     
-    /* Table Responsive Hacks */
+    /* Table Responsive Stack */
     .table-responsive {
         border: 0;
+        overflow-x: hidden !important; /* Force no horizontal scroll */
+        padding: 0 !important;
     }
     
     .admin-table thead {
-        display: none; /* Hide headers on mobile */
+        display: none !important;
     }
     
     .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
-        display: block;
-        width: 100%;
+        display: block !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
     }
     
     .admin-table tr {
-        margin-bottom: 1rem;
-        border: 1px solid var(--admin-border);
-        border-radius: 12px;
+        margin-bottom: 1.5rem !important;
+        border: 1px solid var(--admin-border) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+        background: #ffffff !important;
+        padding: 0.5rem 0 !important;
         overflow: hidden;
     }
     
     .admin-table td {
-        text-align: right;
-        padding: 0.75rem 1rem;
-        position: relative;
+        text-align: right !important;
+        padding: 0.85rem 1rem !important;
+        position: relative !important;
+        min-height: 48px !important;
         border: none !important;
-        border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+        border-bottom: 1px solid rgba(0,0,0,0.03) !important;
+        width: 100% !important;
     }
     
     .admin-table td:last-child {
         border-bottom: 0 !important;
+        display: flex !important;
+        justify-content: space-between !important; /* Buttons on right, label on left */
+        align-items: center !important;
+        background: #f8f9fa !important;
+        margin-top: 0.5rem;
     }
     
     .admin-table td::before {
         content: attr(data-label);
         position: absolute;
         left: 1rem;
-        width: 45%;
-        text-align: left;
+        top: 50%;
+        transform: translateY(-50%);
         font-weight: 700;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
         color: var(--admin-muted);
+        opacity: 0.8;
     }
     
-    /* Exceptions for complex cells */
+    /* Cell Specific Adjustments for 360px */
     .admin-table td.ps-4 {
         text-align: left;
-        background: #fafafa;
+        background: #f8f9fa;
+        padding: 1rem !important;
     }
     
     .admin-table td.ps-4::before {
         display: none;
+    }
+
+    .admin-table .text-truncate {
+        max-width: 200px !important;
+    }
+
+    .btn-action-pill {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
     }
 }
 
