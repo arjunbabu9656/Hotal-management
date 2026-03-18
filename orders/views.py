@@ -91,6 +91,7 @@ def checkout(request):
         
         order = Order.objects.create(
             customer=request.user,
+            is_internal=request.user.is_superuser or request.user.profile.role in ['manager', 'owner', 'staff'],
             room_number=room_number if order_type == 'delivery' else None,
             order_type=order_type,
             payment_method=payment_method,

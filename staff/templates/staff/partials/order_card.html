@@ -1,0 +1,71 @@
+{% load static %}
+<div class="col order-card-item animate-fade-in" data-order-id="{{ order.id }}" data-timestamp="{{ order.created_at|date:'U' }}">
+    <div class="card card-order h-100 shadow-sm rounded-4 border-0" style="border-left: 5px solid {% if order.is_internal %}#ffc107{% else %}#007bff{% endif %}">
+        <div class="card-header bg-white py-2 py-md-3 border-bottom d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="mb-0 fw-bold fs-6">Order #{{ order.id }}</h6>
+                <span class="text-muted extra-small">{% if order.is_internal %}Manager/Admin{% else %}{{ order.get_order_type_display }}{% endif %}</span>
+            </div>
+            {% if order.is_internal %}
+                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-2 px-md-3 extra-small fw-bold">INTERNAL</span>
+            {% elif order.room_number %}
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2 px-md-3 extra-small">Room {{ order.room_number }}</span>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <span class="small text-muted"><i class="far fa-clock me-1"></i> Placed {{ order.created_at|timesince }} ago</span>
+                <span id="age-indicator-{{ order.id }}" class="small fw-bold"></span>
+            </div>
+
+            <div class="items-list mb-2">
+                {% for item in order.items.all %}
+                <div class="d-flex justify-content-between align-items-start mb-1 p-1 p-md-2 bg-light rounded-3">
+                    <div class="w-100">
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-bold extra-small">{{ item.quantity }}x {{ item.food_item.name }}</span>
+                        </div>
+                        {% if item.instructions %}
+                        <div class="mt-1 extra-small text-primary">
+                            <i class="fas fa-info-circle me-1"></i> {{ item.instructions }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if order.special_note %}
+            <div class="alert alert-warning py-2 px-3 small border-0 mb-3 rounded-3">
+                <i class="fas fa-sticky-note me-2"></i><strong>Note:</strong> {{ order.special_note }}
+            </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                <span class="extra-small text-muted">Claimed by:</span>
+                {% if order.assigned_to %}
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill fw-bold">
+                    <i class="fas fa-user-check me-1"></i> {{ order.assigned_to.username }}
+                </span>
+                {% else %}
+                <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill fw-bold">
+                    <i class="fas fa-exclamation-circle me-1"></i> UNCLAIMED
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-footer bg-white border-top-0 pb-4 pt-0">
+            <div class="d-grid gap-2">
+                {% if not order.assigned_to %}
+                    <a href="{% url 'staff:take_order' order.id %}" class="btn btn-premium rounded-pill py-2 fw-bold animate-pulse">
+                        <i class="fas fa-hand-holding-heart me-2"></i>CLAIM THIS ORDER
+                    </a>
+                {% else %}
+                    <div class="alert alert-light border border-dashed py-2 px-3 small mb-0 rounded-3 text-center">
+                        <i class="fas fa-lock me-2"></i>In Progress by {{ order.assigned_to.username }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

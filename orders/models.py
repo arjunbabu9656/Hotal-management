@@ -20,6 +20,7 @@ class Order(models.Model):
         ('card', 'Card Payment'),
         ('upi', 'UPI Payment'),
     )
+    is_internal = models.BooleanField(default=False)
     customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     room_number = models.CharField(max_length=10, blank=True, null=True)
     order_type = models.CharField(max_length=10, choices=ORDER_TYPE_CHOICES, default='delivery')

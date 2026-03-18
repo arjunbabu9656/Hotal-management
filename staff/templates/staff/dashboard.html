@@ -11,84 +11,37 @@
 </div>
 
 
+{% if internal_orders %}
+<div class="mb-5">
+    <div class="d-flex align-items-center mb-4">
+        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+            <i class="fas fa-crown text-warning"></i>
+        </div>
+        <h3 class="fw-bold mb-0">Internal Manager Orders</h3>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        {% for order in internal_orders %}
+            {% include "staff/partials/order_card.html" with order=order is_internal=True %}
+        {% endfor %}
+    </div>
+</div>
+<hr class="my-5 opacity-10">
+{% endif %}
+
+<div class="d-flex align-items-center mb-4">
+    <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+        <i class="fas fa-users text-primary"></i>
+    </div>
+    <h3 class="fw-bold mb-0">Guest Orders</h3>
+</div>
+
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4" id="orders-container">
     {% for order in orders %}
-    <div class="col order-card-item animate-fade-in" data-order-id="{{ order.id }}" data-timestamp="{{ order.created_at|date:'U' }}">
-        <div class="card card-order h-100 shadow-sm rounded-4 border-0">
-            <div class="card-header bg-white py-2 py-md-3 border-bottom d-flex justify-content-between align-items-center">
-                <div>
-                    <h6 class="mb-0 fw-bold fs-6">Order #{{ order.id }}</h6>
-                    <span class="text-muted extra-small">{{ order.get_order_type_display }}</span>
-                </div>
-                {% if order.order_type == 'delivery' %}
-                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2 px-md-3 extra-small">Room {{ order.room_number }}</span>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-3 d-flex justify-content-between align-items-center">
-                    <span class="small text-muted"><i class="far fa-clock me-1"></i> Placed {{ order.created_at|timesince }} ago</span>
-                    <span id="age-indicator-{{ order.id }}" class="small fw-bold"></span>
-                </div>
-
-                <div class="items-list mb-2">
-                    {% for item in order.items.all %}
-                    <div class="d-flex justify-content-between align-items-start mb-1 p-1 p-md-2 bg-light rounded-3">
-                        <div class="w-100">
-                            <div class="d-flex justify-content-between">
-                                <span class="fw-bold extra-small">{{ item.quantity }}x {{ item.food_item.name }}</span>
-                            </div>
-                            {% if item.instructions %}
-                            <div class="mt-1 extra-small text-primary">
-                                <i class="fas fa-info-circle me-1"></i> {{ item.instructions }}
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                {% if order.special_note %}
-                <div class="alert alert-warning py-2 px-3 small border-0 mb-3 rounded-3">
-                    <i class="fas fa-sticky-note me-2"></i><strong>Note:</strong> {{ order.special_note }}
-                </div>
-                {% endif %}
-
-                <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
-                    <span class="extra-small text-muted">Payment:</span>
-                    <span class="badge rounded-pill extra-small {% if order.payment_method == 'cash' %}bg-warning text-dark{% elif order.payment_method == 'card' %}bg-primary{% else %}bg-info text-white{% endif %}">
-                        {{ order.get_payment_method_display }}
-                    </span>
-                </div>
-
-                {% if order.rating %}
-                <div class="mt-3 p-2 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-10">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="small fw-bold text-success">Feedback:</span>
-                        <span class="text-warning small">
-                            {% for i in "12345" %}
-                            <i class="{% if forloop.counter <= order.rating %}fas{% else %}far{% endif %} fa-star"></i>
-                            {% endfor %}
-                        </span>
-                    </div>
-                    {% if order.feedback %}
-                    <p class="small mb-0 text-muted">"{{ order.feedback|truncatechars:100 }}"</p>
-                    {% endif %}
-                </div>
-                {% endif %}
-            </div>
-            <div class="card-footer bg-white border-top-0 pb-4 pt-0">
-                <div class="d-grid gap-2">
-                    <div class="alert alert-info py-2 px-3 small border-0 mb-0 rounded-3 text-center">
-                        <i class="fas fa-info-circle me-2"></i><strong>Read-Only Mode:</strong> Actions are restricted to the Admin Panel.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        {% include "staff/partials/order_card.html" with order=order %}
     {% empty %}
     <div class="col-12 text-center py-5">
         <div class="display-1 text-muted mb-4"><i class="fas fa-check-circle"></i></div>
-        <h3>No active orders</h3>
+        <h3>No active guest orders</h3>
         <p class="text-muted">Take a break! All caught up.</p>
     </div>
     {% endfor %}

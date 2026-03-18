@@ -10,15 +10,37 @@ from orders.views import assign_order_to_role
 @login_required
 @role_required(allowed_roles=['staff', 'owner'])
 def dashboard(request):
-    # ONLY see orders strictly assigned to the user, and EXCLUDE orders placed by managers
+    # Separate orders into Regular and Internal (Manager)
     active_orders = Order.objects.filter(
         status__in=['pending', 'preparing', 'ready', 'delivering'], 
         is_archived=False
     ).order_by('created_at')
     
+    regular_orders = active_orders.filter(is_internal=False)
+    internal_orders = active_orders.filter(is_internal=True)
+    
     return render(request, 'staff/dashboard.html', {
-        'orders': active_orders,
+        'orders': regular_orders,
+        'internal_orders': internal_orders,
     })
+
+@login_required
+@role_required(allowed_roles=['staff', 'owner'])
+def take_order(request, order_id):
+    from django.contrib import messages
+    order = get_object_or_404(Order, id=order_id, is_archived=False)
+    
+    if not order.assigned_to:
+        order.assigned_to = request.user
+        # When taken, auto-move to preparing if it was pending
+        if order.status == 'pending':
+            order.status = 'preparing'
+        order.save()
+        messages.success(request, f"Order #{order.id} successfully taken by you!")
+    else:
+        messages.error(request, f"This order was already taken by {order.assigned_to.username}.")
+        
+    return redirect('staff:dashboard')
 
 @login_required
 @owner_required
