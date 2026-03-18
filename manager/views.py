@@ -63,14 +63,14 @@ def order_detail(request, order_id):
     return render(request, 'manager/order_detail.html', {'order': order})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@role_required(allowed_roles=['owner', 'manager'])
 def menu_list(request):
     items = FoodItem.objects.all().order_by('category')
     categories = Category.objects.all()
     return render(request, 'manager/menu.html', {'items': items, 'categories': categories})
 
 @login_required
-@owner_required
+@role_required(allowed_roles=['owner', 'manager'])
 def food_item_add(request):
     if request.method == 'POST':
         form = FoodItemForm(request.POST, request.FILES)
@@ -83,7 +83,7 @@ def food_item_add(request):
     return render(request, 'manager/menu_form.html', {'form': form, 'title': 'Add Food Item'})
 
 @login_required
-@owner_required
+@role_required(allowed_roles=['owner', 'manager'])
 def food_item_edit(request, pk):
     item = get_object_or_404(FoodItem, pk=pk)
     if request.method == 'POST':
@@ -97,7 +97,7 @@ def food_item_edit(request, pk):
     return render(request, 'manager/menu_form.html', {'form': form, 'item': item, 'title': 'Edit Food Item'})
 
 @login_required
-@owner_required
+@role_required(allowed_roles=['owner', 'manager'])
 def food_item_delete(request, pk):
     item = get_object_or_404(FoodItem, pk=pk)
     if request.method == 'POST':
@@ -107,13 +107,13 @@ def food_item_delete(request, pk):
     return render(request, 'manager/confirm_delete.html', {'item': item, 'type': 'Food Item'})
 
 @login_required
-@role_required(allowed_roles=['owner'])
+@role_required(allowed_roles=['owner', 'manager'])
 def category_list(request):
     categories = Category.objects.all()
     return render(request, 'manager/category_list.html', {'categories': categories})
 
 @login_required
-@owner_required
+@role_required(allowed_roles=['owner', 'manager'])
 def category_add(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST, request.FILES)
@@ -126,7 +126,7 @@ def category_add(request):
     return render(request, 'manager/menu_form.html', {'form': form, 'title': 'Add Category'})
 
 @login_required
-@owner_required
+@role_required(allowed_roles=['owner', 'manager'])
 def category_edit(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -140,7 +140,7 @@ def category_edit(request, pk):
     return render(request, 'manager/menu_form.html', {'form': form, 'title': 'Edit Category'})
 
 @login_required
-@owner_required
+@role_required(allowed_roles=['owner', 'manager'])
 def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':

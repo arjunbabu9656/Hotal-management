@@ -25,20 +25,21 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg glass-panel sticky-top mx-3 mt-3 rounded-pill shadow-sm border-0 bg-white bg-opacity-75">
-        <div class="container-fluid px-4">
+    <nav class="navbar navbar-kitchen sticky-top mx-2 mb-3 mt-3 rounded-pill shadow-sm border-0 bg-white bg-opacity-75">
+        <div class="container-fluid px-3">
             <a class="navbar-brand fw-bold d-flex align-items-center" href="/">
                 <div class="bg-success rounded-circle p-1 me-2 d-inline-flex">
                     <i class="fas fa-utensils text-white small"></i>
                 </div>
-                <span class="tracking-tight text-dark">Kitchen<span class="text-success">Portal</span></span>
+                <span class="tracking-tight text-dark"><span class="d-none d-sm-inline">Kitchen</span><span class="text-success">Portal</span></span>
             </a>
             <div class="ms-auto d-flex align-items-center">
                 <div class="dropdown">
-                    <button class="btn btn-light rounded-pill border px-4 shadow-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user-chef me-2 text-success"></i> {{ user.username }}
+                    <button class="btn btn-light rounded-pill border px-3 px-md-4 shadow-sm dropdown-toggle small" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1 me-md-2 text-success"></i> <span class="d-none d-md-inline">{{ user.username }}</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 mt-3">
+                        <li class="px-3 py-2 d-md-none fw-bold text-muted extra-small">{{ user.username }}</li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item py-2 text-danger fw-medium" href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                     </ul>

@@ -185,3 +185,87 @@ body.admin-mode {
 .animate-in {
     animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .admin-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .admin-header h1 {
+        font-size: 1.25rem;
+    }
+    
+    .px-4.px-lg-5 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    .admin-card {
+        padding: 1rem;
+    }
+    
+    .admin-stat-value {
+        font-size: 1.5rem;
+    }
+    
+    /* Table Responsive Hacks */
+    .table-responsive {
+        border: 0;
+    }
+    
+    .admin-table thead {
+        display: none; /* Hide headers on mobile */
+    }
+    
+    .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+        display: block;
+        width: 100%;
+    }
+    
+    .admin-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--admin-border);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .admin-table td {
+        text-align: right;
+        padding: 0.75rem 1rem;
+        position: relative;
+        border: none !important;
+        border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+    }
+    
+    .admin-table td:last-child {
+        border-bottom: 0 !important;
+    }
+    
+    .admin-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        width: 45%;
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--admin-muted);
+    }
+    
+    /* Exceptions for complex cells */
+    .admin-table td.ps-4 {
+        text-align: left;
+        background: #fafafa;
+    }
+    
+    .admin-table td.ps-4::before {
+        display: none;
+    }
+}
+
+/* Utilities */
+.extra-small { font-size: 0.7rem; }
+.italic { font-style: italic; }

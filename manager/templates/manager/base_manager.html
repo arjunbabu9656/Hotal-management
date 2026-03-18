@@ -74,17 +74,27 @@
             <!-- Main Content Area -->
             <main class="col-md-9 ms-sm-auto col-lg-10">
                 <!-- Mobile Nav (Visible only on mobile) -->
-                <div class="d-md-none p-3 border-bottom bg-white d-flex justify-content-between align-items-center">
-                    <div class="fw-bold"><i class="fas fa-square me-2"></i> HotelFood</div>
-                    <button class="btn btn-sm btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu">
+                <!-- Mobile Nav Upgrade -->
+                <div class="d-md-none p-3 border-bottom bg-white sticky-top z-3 d-flex justify-content-between align-items-center shadow-sm">
+                    <div class="fw-bold h5 mb-0"><i class="fas fa-square me-2 text-dark"></i>HotelFood</div>
+                    <button class="btn btn-dark rounded-pill" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <div class="collapse w-100 position-absolute start-0 top-100 bg-white shadow-lg z-3" id="mobileMenu">
-                        <div class="p-3">
-                            <!-- Mobile links here -->
-                            <a class="admin-nav-link" href="{% url 'manager:dashboard' %}">Dashboard</a>
-                            <a class="admin-nav-link" href="{% url 'manager:order_list' %}">Orders</a>
-                            <a class="admin-nav-link text-danger" href="{% url 'accounts:logout' %}">Logout</a>
+                    <div class="collapse w-100 position-absolute start-0 top-100 bg-white shadow-lg animate-in" id="mobileMenu">
+                        <div class="p-3 admin-nav">
+                            <a class="admin-nav-link" href="{% url 'manager:dashboard' %}">
+                                <i class="fas fa-th-large"></i> Dashboard
+                            </a>
+                            <a class="admin-nav-link" href="{% url 'manager:order_list' %}">
+                                <i class="fas fa-receipt"></i> Orders
+                            </a>
+                            <a class="admin-nav-link" href="{% url 'manager:menu_list' %}">
+                                <i class="fas fa-utensils"></i> Menu Items
+                            </a>
+                            <hr class="my-2 opacity-10">
+                            <a class="admin-nav-link text-danger" href="{% url 'accounts:logout' %}">
+                                <i class="fas fa-power-off"></i> Logout
+                            </a>
                         </div>
                     </div>
                 </div>

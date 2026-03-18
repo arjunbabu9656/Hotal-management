@@ -21,7 +21,7 @@
 </div>
 
 <!-- Category Filters -->
-<div class="mb-4 d-flex flex-wrap justify-content-center gap-2 animate-fade-in px-2" style="animation-delay: 0.1s;">
+<div class="mb-4 d-flex flex-nowrap overflow-auto hide-scrollbar justify-content-start justify-content-md-center gap-2 animate-fade-in px-2 category-scroll" style="animation-delay: 0.1s;">
     <a href="{% url 'menu:menu_list' %}" class="btn rounded-pill px-3 py-2 fw-medium small {% if not current_category %}btn-premium{% else %}btn-light border{% endif %}">
         All
     </a>
