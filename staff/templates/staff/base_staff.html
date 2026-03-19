@@ -67,11 +67,6 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link rounded-pill px-4 fw-bold {% if request.resolver_match.url_name == 'internal_orders' %}active bg-warning text-dark shadow-sm{% else %}bg-light text-dark border{% endif %}" href="{% url 'staff:internal_orders' %}">
-                            <i class="fas fa-crown me-2"></i>Internal Orders
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link rounded-pill px-4 fw-bold {% if request.resolver_match.url_name == 'menu_availability' %}active bg-secondary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}" href="{% url 'staff:menu_availability' %}">
                             <i class="fas fa-clipboard-check me-2"></i>Menu Availability
                         </a>
