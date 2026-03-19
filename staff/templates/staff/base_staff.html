@@ -202,8 +202,8 @@
             setTimeout(() => { toast.remove(); }, 3000);
         }
 
-        // Auto-refresh unless modal is open
-        setInterval(() => { if (!isModalOpen) location.reload(); }, 30000);
+        // Auto-refresh for high-speed kitchen!
+        setInterval(() => { if (!isModalOpen) location.reload(); }, 5000);
     </script>
     {% block extra_js %}{% endblock %}
 </body>
