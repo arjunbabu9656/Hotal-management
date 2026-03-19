@@ -78,32 +78,6 @@
         {% block content %}{% endblock %}
     </div>
 
-    <!-- Message Modal -->
-    <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold"><i class="fas fa-comment-dots me-2 text-teal"></i>Send Message to Guest</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="messageForm" method="post">
-                    {% csrf_token %}
-                    <div class="modal-body p-4">
-                        <div class="glass-panel p-3 border-0 rounded-4 mb-0">
-                            <label class="form-label small fw-bold text-muted mb-2">Message Content</label>
-                            <textarea name="content" class="form-control border-0 bg-transparent shadow-none" rows="4" placeholder="Tell the customer something about their order..." required style="resize: none;"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0 pt-0 px-4 pb-4">
-                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-premium rounded-pill px-4">
-                            <i class="fas fa-paper-plane me-2"></i>Send Message
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <!-- Status Confirmation Modal -->
     <div class="modal fade" id="statusConfirmModal" tabindex="-1" aria-hidden="true">
@@ -138,7 +112,7 @@
         let pendingBtn = null;
 
         // Track modal states
-        ['messageModal', 'statusConfirmModal'].forEach(id => {
+        ['statusConfirmModal'].forEach(id => {
             const modalEl = document.getElementById(id);
             if (modalEl) {
                 modalEl.addEventListener('show.bs.modal', () => { isModalOpen = true; });
@@ -203,15 +177,6 @@
             });
         }
 
-        // Message modal
-        const msgModal = document.getElementById('messageModal');
-        if (msgModal) {
-            msgModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const orderId = button.getAttribute('data-order-id');
-                msgModal.querySelector('#messageForm').action = `/orders/order/${orderId}/message/`;
-            });
-        }
 
         function updateOrderAges() {
             const now = new Date();

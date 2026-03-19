@@ -168,20 +168,3 @@ def cancel_order(request, order_id):
         return redirect('manager:order_list')
     return redirect('orders:order_list')
 
-@login_required
-@role_required(allowed_roles=['staff', 'manager', 'owner'])
-@require_POST
-def send_order_message(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    content = request.POST.get('content')
-    
-    if content:
-        OrderMessage.objects.create(
-            order=order,
-            sender=request.user,
-            content=content,
-            is_staff_message=True
-        )
-        messages.success(request, "Message sent to customer.")
-    
-    return redirect('orders:order_detail', order_id=order_id)

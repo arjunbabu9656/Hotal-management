@@ -165,43 +165,7 @@
                 </div>
             </div>
             {% endif %}
-
-            <!-- Messaging Section -->
-            <div class="mt-4 pt-4 border-top">
-                <h5 class="fw-bold mb-3 d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-comments me-2 text-teal"></i>Messages</span>
-                    <span class="badge bg-light text-dark rounded-pill extra-small">{{ order.messages.count }}</span>
-                </h5>
-                
-                <div class="message-container bg-light rounded-4 p-3 mb-3" style="max-height: 250px; overflow-y: auto;">
-                    {% for msg in order.messages.all %}
-                    <div class="mb-3 {% if msg.is_staff_message %}text-start{% else %}text-end{% endif %} animate-fade-in">
-                        <div class="d-inline-block p-3 rounded-4 shadow-sm {% if msg.is_staff_message %}bg-white border-start border-teal border-4{% else %}bg-teal text-white{% endif %}" style="max-width: 85%;">
-                            <p class="mb-1 small fw-bold">{% if msg.is_staff_message %}Staff Update{% else %}{{ msg.sender.username }}{% endif %}</p>
-                            <p class="mb-1">{{ msg.content }}</p>
-                            <p class="extra-small mb-0 opacity-75">{{ msg.created_at|date:"H:i A" }}</p>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="text-center py-4 opacity-50">
-                        <i class="fas fa-comment-slash fa-2x mb-2"></i>
-                        <p class="small mb-0">No messages yet.</p>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                {% if user.profile.role in 'staff,manager' %}
-                <form action="{% url 'orders:send_order_message' order.id %}" method="post" class="mt-2">
-                    {% csrf_token %}
-                    <div class="input-group">
-                        <input type="text" name="content" class="form-control border-0 bg-light rounded-start-pill px-3 shadow-none" placeholder="Type a message to guest..." required>
-                        <button class="btn btn-premium rounded-end-pill px-3" type="submit">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </form>
-                {% endif %}
-            </div>
+        </div>
 
             {% if order.status == 'delivered' %}
             <div class="mt-4 pt-4 border-top">
