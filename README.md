@@ -1,6 +1,6 @@
-# Hotel Food Management System
+# Mallu Resturant Management System
 
-A production-ready Django application for hotel food ordering with three distinct role-based interfaces.
+A production-ready Django application for Mallu Resturant food ordering with three distinct role-based interfaces.
 
 ## 🚀 Features
 

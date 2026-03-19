@@ -3,258 +3,37 @@
 {% block content %}
 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-3">
     <div class="d-flex align-items-center flex-wrap gap-2">
-        <h2 class="fw-bold mb-0 me-sm-3">Active Orders</h2>
+        <h2 class="fw-bold mb-0 me-sm-3">Active Guest Orders</h2>
     </div>
     <div class="text-muted small">
         <i class="fas fa-sync-alt fa-spin me-1"></i> Syncing...
     </div>
 </div>
 
-
-{% if internal_orders %}
-<div class="mb-5">
-    <div class="d-flex align-items-center mb-4">
-        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
-            <i class="fas fa-crown text-warning"></i>
+{% if internal_count > 0 %}
+<div class="animate-fade-in mb-4">
+    <a href="{% url 'staff:internal_orders' %}" class="btn btn-warning w-100 rounded-pill py-3 fw-bold d-flex align-items-center justify-content-center border-0 shadow-sm bg-opacity-75">
+        <div class="d-flex align-items-center">
+            <span class="bg-white bg-opacity-50 rounded-circle p-1 me-3 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                <i class="fas fa-crown text-dark small"></i>
+            </span>
+            <span>{{ internal_count }} Internal Management Order{{ internal_count|pluralize }} Active</span>
         </div>
-        <h3 class="fw-bold mb-0">Internal Manager Orders</h3>
-    </div>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-        {% for order in internal_orders %}
-            {% include "staff/partials/order_card.html" with order=order is_internal=True %}
-        {% endfor %}
-    </div>
+        <i class="fas fa-arrow-right ms-auto"></i>
+    </a>
 </div>
-<hr class="my-5 opacity-10">
 {% endif %}
-
-<div class="d-flex align-items-center mb-4">
-    <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-        <i class="fas fa-users text-primary"></i>
-    </div>
-    <h3 class="fw-bold mb-0">Guest Orders</h3>
-</div>
 
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4" id="orders-container">
     {% for order in orders %}
         {% include "staff/partials/order_card.html" with order=order %}
     {% empty %}
     <div class="col-12 text-center py-5">
-        <div class="display-1 text-muted mb-4"><i class="fas fa-check-circle"></i></div>
-        <h3>No active guest orders</h3>
-        <p class="text-muted">Take a break! All caught up.</p>
+        <div class="display-1 text-muted opacity-25 mb-4 animate-bounce"><i class="fas fa-check-circle"></i></div>
+        <h3 class="fw-bold">No active guest orders</h3>
+        <p class="text-muted">Take a break! You're all caught up for now.</p>
     </div>
     {% endfor %}
 </div>
 
-<!-- Message Modal -->
-<div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold"><i class="fas fa-comment-dots me-2 text-teal"></i>Send Message to Guest</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="messageForm" method="post">
-                {% csrf_token %}
-                <div class="modal-body p-4">
-                    <div class="glass-panel p-3 border-0 rounded-4 mb-0">
-                        <label class="form-label small fw-bold text-muted mb-2">Message Content</label>
-                        <textarea name="content" class="form-control border-0 bg-transparent shadow-none" rows="4" placeholder="Tell the customer something about their order..." required style="resize: none;"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 pt-0 px-4 pb-4">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-premium rounded-pill px-4">
-                        <i class="fas fa-paper-plane me-2"></i>Send Message
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Status Confirmation Modal -->
-<div class="modal fade" id="statusConfirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-            <div class="modal-body p-4 text-center">
-                <div class="bg-primary bg-opacity-10 p-4 rounded-circle d-inline-flex mb-4">
-                    <i class="fas fa-fire fa-3x text-primary animate-pulse"></i>
-                </div>
-                <h4 class="fw-bold mb-2">Pick Up Order #<span id="confirmOrderId"></span>?</h4>
-                <p class="text-muted mb-4 px-3">By confirming, you take full responsibility for preparing this order. The customer will be notified immediately.</p>
-                
-                <div class="d-grid gap-2">
-                    <button type="button" id="confirmStatusBtn" class="btn btn-premium rounded-pill py-3 fw-bold">
-                        <i class="fas fa-check-circle me-2"></i>Begin Preparation
-                    </button>
-                    <button type="button" class="btn btn-light rounded-pill py-3 fw-bold border" data-bs-dismiss="modal">
-                        Not Now
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-// Update order age indicators
-function updateAges() {
-    const now = new Date();
-    document.querySelectorAll('.order-card-item').forEach(item => {
-        const orderId = item.dataset.orderId;
-        const placedAtText = item.querySelector('.small.text-muted i').nextSibling.textContent.trim();
-        // For a more robust solution, we'd pass the actual timestamp, 
-        // but for this demo card extraction or data attribute works.
-        // Let's use a data attribute for accuracy.
-    });
-}
-
-// Rewriting part of the template to include data-timestamp for better JS handling
-// and adding the logic directly to update the UI color coding.
-</script>
-
-<script>
-// --- REFACTORED STATUS UPDATE LOGIC ---
-let isModalOpen = false;
-let pendingOrderId = null;
-let pendingStatus = null;
-let pendingBtn = null;
-
-// Track modal states to pause auto-reload
-['messageModal', 'statusConfirmModal'].forEach(id => {
-    const modalEl = document.getElementById(id);
-    if (modalEl) {
-        modalEl.addEventListener('show.bs.modal', () => { isModalOpen = true; });
-        modalEl.addEventListener('hidden.bs.modal', () => { isModalOpen = false; });
-    }
-});
-
-function performStatusUpdate(orderId, newStatus, btn) {
-    const originalContent = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Processing...';
-    
-    const url = `/staff/order/${orderId}/status/${newStatus}/`;
-    console.log(`Executing update: ${orderId} -> ${newStatus}`);
-    
-    fetch(url, {
-        method: 'POST',
-        headers: { 
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.text().then(text => { throw new Error(`Server error: ${response.status}`) });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showToast('Order status updated successfully! 🍳', 'success');
-            setTimeout(() => location.reload(), 1200);
-        } else {
-            throw new Error(data.error || 'Update failed');
-        }
-    })
-    .catch(error => {
-        console.error('Update failed:', error);
-        showToast(error.message, 'danger');
-        btn.disabled = false;
-        btn.innerHTML = originalContent;
-    });
-}
-
-// Click listener for status buttons
-document.addEventListener('click', function(e) {
-    const btn = e.target.closest('[data-action="status-update"]');
-    if (btn) {
-        const orderId = btn.dataset.orderId;
-        const newStatus = btn.dataset.status;
-
-        if (newStatus === 'preparing') {
-            // Use Custom Modal for Pick Up
-            pendingOrderId = orderId;
-            pendingStatus = newStatus;
-            pendingBtn = btn;
-            
-            document.getElementById('confirmOrderId').textContent = orderId;
-            const confirmModal = new bootstrap.Modal(document.getElementById('statusConfirmModal'));
-            confirmModal.show();
-        } else {
-            // Direct update for other statuses
-            performStatusUpdate(orderId, newStatus, btn);
-        }
-    }
-});
-
-// Confirm button in the new modal
-document.getElementById('confirmStatusBtn').addEventListener('click', function() {
-    if (pendingOrderId && pendingStatus && pendingBtn) {
-        const modalEl = document.getElementById('statusConfirmModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        if (modalInstance) modalInstance.hide();
-        
-        performStatusUpdate(pendingOrderId, pendingStatus, pendingBtn);
-    }
-});
-
-function updateOrderAges() {
-    const now = new Date();
-    document.querySelectorAll('.order-card-item').forEach(item => {
-        const orderId = item.dataset.orderId;
-        const timestamp = parseInt(item.dataset.timestamp) * 1000;
-        if (!timestamp) return;
-        
-        const diffMs = now - timestamp;
-        const diffMins = Math.floor(diffMs / 60000);
-        
-        const indicator = document.getElementById(`age-indicator-${orderId}`);
-        const cardOrder = item.querySelector('.card-order');
-        if (!indicator || !cardOrder) return;
-        
-        indicator.textContent = `${diffMins}m old`;
-        
-        if (diffMins < 10) {
-            indicator.className = 'small age-green';
-            cardOrder.style.borderLeftColor = '#28a745';
-        } else if (diffMins < 20) {
-            indicator.className = 'small age-amber';
-            cardOrder.style.borderLeftColor = '#ffc107';
-        } else {
-            indicator.className = 'small age-red';
-            cardOrder.style.borderLeftColor = '#dc3545';
-        }
-    });
-}
-
-// Initial call and smart intervals
-updateOrderAges();
-setInterval(updateOrderAges, 10000);
-
-// SMART RELOAD: Don't refresh if a modal is open
-setInterval(() => {
-    if (!isModalOpen) {
-        console.log('Smart Sync: Data is up to date.');
-        location.reload();
-    } else {
-        console.log('Smart Sync Paused: User is busy.');
-    }
-}, 30000);
-// Message modal handle
-const messageModal = document.getElementById('messageModal');
-if (messageModal) {
-    messageModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const orderId = button.getAttribute('data-order-id');
-        const form = messageModal.querySelector('#messageForm');
-        form.action = `/orders/order/${orderId}/message/`;
-    });
-}
-</script>
 {% endblock %}

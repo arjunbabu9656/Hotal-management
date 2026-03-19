@@ -1,6 +1,6 @@
 {% load static %}
 <div class="col order-card-item animate-fade-in" data-order-id="{{ order.id }}" data-timestamp="{{ order.created_at|date:'U' }}">
-    <div class="card card-order h-100 shadow-sm rounded-4 border-0" style="border-left: 5px solid {% if order.is_internal %}#ffc107{% else %}#007bff{% endif %}">
+    <div class="card card-order h-100 shadow-sm rounded-4 border-0 {% if order.is_internal %}border-start border-5 border-warning{% else %}border-start border-5 border-primary{% endif %}">
         <div class="card-header bg-white py-2 py-md-3 border-bottom d-flex justify-content-between align-items-center">
             <div>
                 <h6 class="mb-0 fw-bold fs-6">Order #{{ order.id }}</h6>
@@ -56,15 +56,48 @@
         </div>
         <div class="card-footer bg-white border-top-0 pb-4 pt-0">
             <div class="d-grid gap-2">
-                {% if not order.assigned_to %}
-                    <a href="{% url 'staff:take_order' order.id %}" class="btn btn-premium rounded-pill py-2 fw-bold animate-pulse">
-                        <i class="fas fa-hand-holding-heart me-2"></i>CLAIM THIS ORDER
-                    </a>
-                {% else %}
-                    <div class="alert alert-light border border-dashed py-2 px-3 small mb-0 rounded-3 text-center">
-                        <i class="fas fa-lock me-2"></i>In Progress by {{ order.assigned_to.username }}
-                    </div>
+                {% if order.status == 'pending' %}
+                    {% if not order.assigned_to %}
+                        <button type="button" class="btn btn-premium rounded-pill py-3 fw-bold" 
+                                data-action="status-update" 
+                                data-order-id="{{ order.id }}" 
+                                data-status="preparing">
+                            <i class="fas fa-hand-sparkles me-2"></i> PICK UP ORDER
+                        </button>
+                    {% else %}
+                        <div class="alert alert-light border-dashed py-2 mb-0 rounded-3 text-center">
+                            <i class="fas fa-lock me-1"></i> Underway by {{ order.assigned_to.username }}
+                        </div>
+                    {% endif %}
+                {% elif order.status == 'preparing' %}
+                    <button type="button" class="btn btn-success rounded-pill py-2 fw-bold" 
+                            data-action="status-update" 
+                            data-order-id="{{ order.id }}" 
+                            data-status="ready">
+                        <i class="fas fa-check-double me-1"></i> MARK AS READY
+                    </button>
+                {% elif order.status == 'ready' %}
+                    <button type="button" class="btn btn-info text-white rounded-pill py-2 fw-bold" 
+                            data-action="status-update" 
+                            data-order-id="{{ order.id }}" 
+                            data-status="delivering">
+                        <i class="fas fa-shipping-fast me-1"></i> START DELIVERY
+                    </button>
+                {% elif order.status == 'delivering' %}
+                    <button type="button" class="btn btn-dark rounded-pill py-2 fw-bold" 
+                            data-action="status-update" 
+                            data-order-id="{{ order.id }}" 
+                            data-status="delivered">
+                        <i class="fas fa-house-user me-1"></i> MARK DELIVERED
+                    </button>
                 {% endif %}
+                
+                <button type="button" class="btn btn-light rounded-pill border py-2 extra-small fw-bold" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#messageModal" 
+                        data-order-id="{{ order.id }}">
+                    <i class="fas fa-comment-dots me-1 text-primary"></i> MESSAGE GUEST
+                </button>
             </div>
         </div>
     </div>

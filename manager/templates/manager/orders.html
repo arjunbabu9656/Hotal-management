@@ -8,10 +8,10 @@
 {% block content %}
 <div class="row mb-4 align-items-center g-3">
     <div class="col-md-4">
-        <div class="position-relative">
+        <form method="get" class="position-relative">
             <i class="fas fa-search position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
-            <input type="text" class="form-control ps-5 rounded-3 border-0 shadow-sm" placeholder="Search orders..." style="height: 45px;">
-        </div>
+            <input type="text" name="q" class="form-control ps-5 rounded-3 border-0 shadow-sm" placeholder="Search orders..." style="height: 45px;" value="{{ query|default:'' }}" autocomplete="off">
+        </form>
     </div>
     <div class="col-md-8 text-md-end">
         <div class="d-flex justify-content-md-end gap-2">

@@ -53,8 +53,18 @@ def dashboard(request):
 @login_required
 @role_required(allowed_roles=['owner', 'manager'])
 def order_list(request):
-    orders = Order.objects.all().order_by('-created_at')
-    return render(request, 'manager/orders.html', {'orders': orders})
+    query = request.GET.get('q')
+    orders = Order.objects.all().select_related('customer').order_by('-created_at')
+    
+    if query:
+        orders = orders.filter(
+            Q(id__icontains=query) | 
+            Q(customer__username__icontains=query) | 
+            Q(room_number__icontains=query) |
+            Q(status__icontains=query)
+        )
+        
+    return render(request, 'manager/orders.html', {'orders': orders, 'query': query})
 
 @login_required
 @role_required(allowed_roles=['owner', 'manager'])
@@ -65,9 +75,16 @@ def order_detail(request, order_id):
 @login_required
 @role_required(allowed_roles=['owner', 'manager'])
 def menu_list(request):
-    items = FoodItem.objects.all().order_by('category')
+    query = request.GET.get('q')
+    items = FoodItem.objects.all().select_related('category').order_by('category')
+    
+    if query:
+        items = items.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        )
+        
     categories = Category.objects.all()
-    return render(request, 'manager/menu.html', {'items': items, 'categories': categories})
+    return render(request, 'manager/menu.html', {'items': items, 'categories': categories, 'query': query})
 
 @login_required
 @role_required(allowed_roles=['owner', 'manager'])
@@ -250,7 +267,7 @@ def order_archive(request):
     })
 
 @login_required
-@owner_required
+@role_required(allowed_roles=['owner', 'manager'])
 def reset_daily_orders(request):
     if request.method == 'POST':
         # Archive all delivered or cancelled orders

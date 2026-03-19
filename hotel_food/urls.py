@@ -12,5 +12,10 @@ urlpatterns = [
     path('', include('menu.urls')), # Set Menu as the default home page
 ]
 
+# Admin Site Customization
+admin.site.site_header = "Mallu Resturant Admin"
+admin.site.site_title = "Mallu Resturant Admin Portal"
+admin.site.index_title = "Welcome to Mallu Resturant Management"
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

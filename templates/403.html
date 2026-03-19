@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Access Denied - Mallu Resturant{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center pt-md-5">
+        <div class="col-md-7 text-center">
+            <!-- Glassmorphic 403 Card -->
+            <div class="glass-panel p-5 rounded-4 shadow-lg border-0 bg-white bg-opacity-75">
+                <div class="mb-4">
+                    <span class="p-4 bg-danger bg-opacity-10 rounded-circle d-inline-block">
+                        <i class="fas fa-lock fa-4x text-danger animate-bounce"></i>
+                    </span>
+                </div>
+                
+                <h1 class="display-3 fw-bold text-dark tracking-tight mb-3">403</h1>
+                <h2 class="h3 fw-semibold text-dark mb-4">Strictly Restricted Access</h2>
+                
+                <p class="text-secondary lead mb-5 mx-auto" style="max-width: 500px;">
+                    It seems you don't have the required administrative permissions to access this specific module. If you believe this is an error, please contact the primary administrator.
+                </p>
+                
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                    <a href="javascript:history.back()" class="btn btn-premium px-4 py-2 rounded-pill shadow-sm">
+                        <i class="fas fa-arrow-left me-2"></i>Go Back
+                    </a>
+                    <a href="{% url 'manager:dashboard' %}" class="btn btn-light border px-4 py-2 rounded-pill">
+                        <i class="fas fa-chart-pie me-2"></i>Dashboard Home
+                    </a>
+                </div>
+            </div>
+            
+            <p class="mt-4 text-muted small">Reference ID: <span class="bg-light px-2 py-1 rounded-pill">{% now "U-r" %}</span></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    .animate-bounce {
+        animation: bounce 1.5s infinite ease-in-out;
+    }
+    .tracking-tight { letter-spacing: -2px; }
+</style>
+{% endblock %}
