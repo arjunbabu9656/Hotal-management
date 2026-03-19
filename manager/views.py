@@ -270,12 +270,11 @@ def order_archive(request):
 @role_required(allowed_roles=['owner', 'manager'])
 def reset_daily_orders(request):
     if request.method == 'POST':
-        # Archive all delivered or cancelled orders
+        # Archive ALL unarchived orders to ensure the dashboard is fully cleared for a new session
         archived_count = Order.objects.filter(
-            status__in=['delivered', 'cancelled'], 
             is_archived=False
         ).update(is_archived=True)
         
-        messages.success(request, f"Successfully archived {archived_count} orders. Staff dashboard is now reset.")
+        messages.success(request, f"Successfully cleared dashboard and archived {archived_count} orders.")
         return redirect('manager:dashboard')
     return redirect('manager:dashboard')
