@@ -10,20 +10,6 @@
     </div>
 </div>
 
-{% if internal_count > 0 %}
-<div class="animate-fade-in mb-4">
-    <a href="{% url 'staff:internal_orders' %}" class="btn btn-warning w-100 rounded-pill py-3 fw-bold d-flex align-items-center justify-content-center border-0 shadow-sm bg-opacity-75">
-        <div class="d-flex align-items-center">
-            <span class="bg-white bg-opacity-50 rounded-circle p-1 me-3 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                <i class="fas fa-crown text-dark small"></i>
-            </span>
-            <span>{{ internal_count }} Internal Management Order{{ internal_count|pluralize }} Active</span>
-        </div>
-        <i class="fas fa-arrow-right ms-auto"></i>
-    </a>
-</div>
-{% endif %}
-
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4" id="orders-container">
     {% for order in orders %}
         {% include "staff/partials/order_card.html" with order=order %}

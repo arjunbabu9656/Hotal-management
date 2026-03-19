@@ -10,32 +10,14 @@ from orders.views import assign_order_to_role
 @login_required
 @role_required(allowed_roles=['staff', 'owner'])
 def dashboard(request):
-    # Only active Guest orders on the main dashboard
+    # Focus strictly on Guest orders for maximum kitchen efficiency
     orders = Order.objects.filter(
-        is_internal=False,
         status__in=['pending', 'preparing', 'ready', 'delivering'], 
         is_archived=False
     ).order_by('created_at')
-    
-    internal_count = Order.objects.filter(is_internal=True, is_archived=False).exclude(status__in=['delivered', 'cancelled']).count()
     
     return render(request, 'staff/dashboard.html', {
         'orders': orders,
-        'internal_count': internal_count,
-    })
-
-@login_required
-@role_required(allowed_roles=['staff', 'owner'])
-def internal_orders_list(request):
-    # Specialized page for Management/Admin orders
-    internal_orders = Order.objects.filter(
-        is_internal=True,
-        status__in=['pending', 'preparing', 'ready', 'delivering'], 
-        is_archived=False
-    ).order_by('created_at')
-    
-    return render(request, 'staff/internal_orders.html', {
-        'internal_orders': internal_orders,
     })
 
 @login_required
@@ -57,7 +39,7 @@ def take_order(request, order_id):
     return redirect('staff:dashboard')
 
 @login_required
-@owner_required
+@role_required(allowed_roles=['staff', 'owner'])
 def update_order_status(request, order_id, new_status):
     order = get_object_or_404(Order, id=order_id)
     

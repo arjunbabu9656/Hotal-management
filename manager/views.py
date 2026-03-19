@@ -34,7 +34,7 @@ def dashboard(request):
     status_counts = Order.objects.filter(created_at__date=today, is_archived=False).values('status').annotate(total=Count('status'))
     
     # Top 5 items
-    top_items = OrderItem.objects.filter(order__is_archived=False).values('food_item__name').annotate(total_qty=Sum('quantity')).order_by('-total_qty')[:5]
+    top_items = OrderItem.objects.all().values('food_item__name').annotate(total_qty=Sum('quantity')).order_by('-total_qty')[:5]
     
     recent_orders = Order.objects.filter(is_archived=False).order_by('-created_at')[:10]
     

@@ -1,14 +1,12 @@
 {% load static %}
 <div class="col order-card-item animate-fade-in" data-order-id="{{ order.id }}" data-timestamp="{{ order.created_at|date:'U' }}">
-    <div class="card card-order h-100 shadow-sm rounded-4 border-0 {% if order.is_internal %}border-start border-5 border-warning{% else %}border-start border-5 border-primary{% endif %}">
+    <div class="card card-order h-100 shadow-sm rounded-4 border-0 border-start border-5 border-primary">
         <div class="card-header bg-white py-2 py-md-3 border-bottom d-flex justify-content-between align-items-center">
             <div>
                 <h6 class="mb-0 fw-bold fs-6">Order #{{ order.id }}</h6>
-                <span class="text-muted extra-small">{% if order.is_internal %}Manager/Admin{% else %}{{ order.get_order_type_display }}{% endif %}</span>
+                <span class="text-muted extra-small">{{ order.get_order_type_display }}</span>
             </div>
-            {% if order.is_internal %}
-                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-2 px-md-3 extra-small fw-bold">INTERNAL</span>
-            {% elif order.room_number %}
+            {% if order.room_number %}
                 <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2 px-md-3 extra-small">Room {{ order.room_number }}</span>
             {% endif %}
         </div>
