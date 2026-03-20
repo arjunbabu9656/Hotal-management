@@ -52,14 +52,6 @@ def update_order_status(request, order_id, new_status):
         if new_status == 'preparing':
             # Pass to a Cooker
             assign_order_to_role(order, 'cooker')
-            
-            # AUTOMATED MESSAGE: Notify Guest
-            OrderMessage.objects.create(
-                order=order,
-                sender=request.user,
-                content="Your order has been confirmed and is now being prepared! 🍳",
-                is_staff_message=True
-            )
         elif new_status == 'ready' and order.order_type == 'delivery':
             # Pass to a Delivery Boy
             assign_order_to_role(order, 'delivery')
