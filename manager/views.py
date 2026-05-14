@@ -278,3 +278,22 @@ def reset_daily_orders(request):
         messages.success(request, f"Successfully cleared dashboard and archived {archived_count} orders.")
         return redirect('manager:dashboard')
     return redirect('manager:dashboard')
+
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+
+@login_required
+@role_required(allowed_roles=['owner', 'manager'])
+def settings_view(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Keep user logged in
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('manager:settings')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'manager/settings.html', {'form': form})

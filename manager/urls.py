@@ -28,4 +28,5 @@ urlpatterns = [
     path('reports/', views.reports, name='reports'),
     path('archive/', views.order_archive, name='order_archive'),
     path('reset-day/', views.reset_daily_orders, name='reset_daily_orders'),
+    path('settings/', views.settings_view, name='settings'),
 ]

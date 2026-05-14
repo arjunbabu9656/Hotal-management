@@ -53,6 +53,9 @@
                         {% endif %}
                         {% endif %}
                         {% endwith %}
+                        <a class="admin-nav-link {% if url_name == 'settings' %}active{% endif %}" href="{% url 'manager:settings' %}">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
                     </div>
                     
                     <div class="mt-auto">
@@ -94,6 +97,9 @@
                             </a>
                             <a class="admin-nav-link" href="{% url 'manager:menu_list' %}">
                                 <i class="fas fa-utensils"></i> Menu Items
+                            </a>
+                            <a class="admin-nav-link" href="{% url 'manager:settings' %}">
+                                <i class="fas fa-cog"></i> Settings
                             </a>
                             <hr class="my-2 opacity-10">
                             <a class="admin-nav-link text-danger" href="{% url 'accounts:logout' %}">

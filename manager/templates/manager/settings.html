@@ -1,0 +1,26 @@
+{% extends "manager/base_manager.html" %}
+{% load crispy_forms_tags %}
+
+{% block header %}
+<h1>Account Settings</h1>
+<p class="text-muted small mb-0">Update your security preferences and password</p>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-md-5">
+                <h4 class="fw-bold mb-4">Change Password</h4>
+                <form method="post" class="authentication-form">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-dark py-2 fw-bold">Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
