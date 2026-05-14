@@ -52,30 +52,20 @@
                 </div>
             </div>
             <div class="card-body p-0 d-flex flex-column h-100">
-                <div class="pt-3">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <h5 class="card-title fw-bold mb-0">{{ item.name }}</h5>
-                        <div class="text-muted extra-small">
-                            <i class="far fa-clock me-1"></i>{{ item.preparation_time }}m
-                        </div>
-                    </div>
-                    <p class="card-text extra-small mb-3">{{ item.description|truncatewords:8 }}</p>
+                <div class="pt-2">
+                    <h5 class="card-title text-dark">{{ item.name }}</h5>
+                    <p class="card-desc d-none d-md-block text-muted extra-small mb-2">{{ item.description|truncatewords:8 }}</p>
                 </div>
                 
-                <div class="price-action-row mt-auto">
-                    <h4 class="fw-bold text-primary mb-0">₹{{ item.price }}</h4>
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="{% url 'menu:dish_detail' item.pk %}" class="btn btn-light rounded-pill px-2 border d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                            <i class="fas fa-info-circle text-muted"></i>
-                        </a>
-                        <button class="btn btn-premium btn-sm rounded-pill px-3" 
-                                data-action="add-to-cart" 
-                                data-item-id="{{ item.id }}"
-                                style="height: 38px;"
-                                {% if not item.is_available %}disabled{% endif %}>
-                            <i class="fas fa-plus me-1"></i>Add
-                        </button>
-                    </div>
+                <div class="price-action-row">
+                    <h4 class="price-tag text-primary">₹{{ item.price }}</h4>
+                    <button class="btn btn-premium btn-add-cart" 
+                            data-action="add-to-cart" 
+                            data-item-id="{{ item.id }}"
+                            {% if not item.is_available %}disabled{% endif %}
+                            aria-label="Add to cart">
+                        <i class="fas fa-plus"></i><span class="d-none d-md-inline ms-1">Add</span>
+                    </button>
                 </div>
             </div>
         </div>

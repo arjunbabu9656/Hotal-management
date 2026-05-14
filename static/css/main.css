@@ -126,53 +126,79 @@ small, .extra-small { font-size: clamp(0.75rem, 2.2vw, 0.875rem); }
 /* 5. FOOD CARDS GRID (1, 2, 3, 4 Columns) */
 .food-grid {
     display: grid;
-    gap: clamp(0.75rem, 3vw, 1.5rem);
-    grid-template-columns: 1fr; /* Default 280px-479px */
+    gap: clamp(4px, 2vw, 1.5rem);
+    grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns default */
 }
 
-@media (min-width: 480px) { .food-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 768px) { .food-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1024px) { .food-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 640px) { .food-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1024px) { .food-grid { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 1440px) { .food-grid { grid-template-columns: repeat(6, 1fr); } }
 
 .card-premium {
     background: white;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     border: 1px solid var(--border-light);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    padding: clamp(8px, 2vw, 16px);
+    padding: clamp(6px, 1.5vw, 16px);
     height: 100%;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-premium:hover {
+    box-shadow: var(--shadow-premium);
+    transform: translateY(-2px);
 }
 
 .card-img-top {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
     width: 100%;
     object-fit: cover;
-    border-radius: var(--radius-md);
+    border-radius: clamp(4px, 1vw, 8px);
 }
 
 .card-title {
+    font-size: clamp(0.7rem, 2.5vw, 1rem);
+    font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top: 0.5rem;
+    margin-block: 6px 2px;
 }
 
 /* 6. PRICE & ADD BUTTON (Adaptive Row) */
 .price-action-row {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     margin-top: auto;
-    padding-top: 1rem;
+    padding-top: 4px;
 }
 
-@media (min-width: 376px) {
-    .price-action-row {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+.price-tag {
+    font-size: clamp(0.7rem, 2.5vw, 1.1rem);
+    font-weight: 800;
+    margin-bottom: 0;
+}
+
+.btn-add-cart {
+    width: clamp(24px, 7vw, 36px);
+    height: clamp(24px, 7vw, 36px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: clamp(0.6rem, 2vw, 0.85rem);
+}
+
+@media (min-width: 768px) {
+    .btn-add-cart {
+        width: auto;
+        border-radius: 20px;
+        padding-inline: 1rem;
     }
 }
 
