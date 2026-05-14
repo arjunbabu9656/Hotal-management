@@ -36,7 +36,7 @@ def login_view(request):
             if user is not None:
                 auth_login(request, user)
                 role = user.profile.role
-                if role == 'manager':
+                if role in ['manager', 'owner']:
                     return redirect('manager:dashboard')
                 elif role == 'staff':
                     return redirect('staff:dashboard')
