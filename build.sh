@@ -17,3 +17,6 @@ done
 
 # Run professional production setup
 python manage.py setup_production
+
+# Seed database with initial users if empty
+python seed_db.py
